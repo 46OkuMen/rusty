@@ -1,0 +1,133 @@
+FILE FORMATS
+.M, .M2 - music, for PMD
+.MAG - large image?
+.MGX - ?
+.COM - executable, usually has text n stuff
+.TBL - ?
+.DAT - ?
+.RGB - ?
+.MAP - ?
+.FOT - ?
+.PPL - SFX?
+.PPT - ?
+.ANI - ?
+
+Title screen options:
+
+83 54 83 75 83 81 83 6a 83 85 81 7c 00 00 (bottom option, 0x1fa02)
+
+ge    --    mu    su    ta    --    to      ( top option, 0x1fa12)
+83 51 81 7c 83 80 83 58 83 5e 81 7c 83 67 00
+131 81 129 124
+
+83 52 83 93 83 65 83 42 83 6a 83 85 81 7c 00     (middle, 0x1fa21)
+
+
+
+
+ge    -     mu    su    ta    to
+83 51       83 80 83 5a                (SJIS codes/output)
+4f 3e 4c 41 0f 2f e1 fa ff ff 42 9c 4a ff ff 43 73 4f 87 4a ff 73 ff 44 95
+4a 04 a3 4c 04 df be 00 47 06 c4 13 00 b9 30 ff 00 ac c0 e8 04 aa e2 f9 ff 07 33 c0
+
+These options are in the .HDI File at offset 0x34d424. (How should I figure out which file that's in?)
+
+
+do u ya liltsu te
+82 c7 82 a4 82 e2 82 c2
+
+?     ?    ?     ?
+82 a3 82 a9 82 c9 82 e0
+
+Fullwidth 300 at 0x2ed4f0
+Bits and pieces of the text... dictionary?
+300 is preceded by 0x00.
+
+0x00 and 0x01 bytes are probably important.
+Explicit/reference control codes?
+
+First story screen at 0x837f4 in memory
+ko     no     (hen)
+82 b1  82 cc  95 d3
+??   = FF 00 54
+/r/n = 00 73?
+
+It's also at 0x5cbe60 in the full ROM.
+previous 4c5a: 0x5cb7fc
+end of data:     5ce16c
+next 4c5a:     0x5ce7ee
+So it's in a 11kb file.
+
+Python script says it's in VISUAL.COM, at ~0x660.
+
+It seems to have the "starts out fine, but becomes garbled quickly" quality that people say is a telltale sign of LZSS.
+
+Entirely normal first line until the to-u to-u. e5 61 04 00 73
+That ending 00 73 is probably a line break?
+
+There's an incrementing pattern 00 54, 01 54, ...06 54 at intervals of about 0x50 (0x54, 0x4e, 0x44, 0x42, 0x54). Is it the window number or something?
+
+Literal/pointer flag: one byte, with 8 bits signifying literal (1) or pointer (0). Literals are 1 byte each, pointers are 2 bytes each.
+Read it backwards???
+FF's at 8-byte intervals at the beginning, when all the text is normal.
+(ef) 82 c6 82 a4 e5 61 04 00 73
+     to--- u---- ^ptr? ?? <LN>?
+
+61 e5 ptr that should somehow point to offset (0x69a)
+
+e561 is at 69e and points to 69a, 4 bytes
+c761 is at 6a4 and points to 678, 4 bytes
+d160 is at 6a6 and points to 683, _3_ bytes (since it copies the 82 as well!!!)
+ac61 is at 6ad and points to ? (maybe some kind of wait control code?
+
+
+last 4 bits' value + 3 = length in bytes of the target thing
+
+real_offset = tail - ((tail - 18 - raw_offset) mod 4096)
+              69e  - ((69e  - 6e5) mod 4096)
+
+val - loc = ?
+6e5 - 69e = 0x47
+6c7 - 6a4 = 0x23
+6d1 - 6a6 = 0x2b
+
+val              rel loc
+6e5: should point 0x04 bytes before it
+6c7: should point 0x2c bytes before it
+6d1: should point 0x23 bytes before it
+
+
+
+
+ff = 1 1 1 1 1 1 1 1
+ef = 1 1 1 0 1 1 1 1
+7c = 0 1 1 1 1 1 0 0
+76 = 0 1 1 1 0 1 1 0
+so 4 bytes of pointers, 5 bytes of literal(?), 2 bytes of pointer
+(7c) c7 61 d1 60 dc 82 c5 82 e0 ac 61 
+     ^ptr  ^ptr  ?  de--- mo--- ^ptr
+     61c7 = (ptr) ko no          (at offset 0x678)
+     60d1 = (ptr) village ma-    (at offset 0x683)
+
+4 bit run length, 12 bit relative offset
+c = 12(dec)
+761 = 
+
+(ef) 1d 05 81 45 02 71 16 05 78
+     ?  ?  dot-- ^ptr  ?  ?  ?
+
+(ff) 06 00 69 50 00 40 00 00
+prolly fuckin ctrl codes
+
+(7c) fc 63 b2 6d 86 05 15 01 54 a9 60
+     ^ptr  ^ptr  ?  ?  ?  ?  ?  ?  ?
+
+(ff) 91 e5 90 a8 8e 45 82 b3
+     kanji kanji kanji chi--
+
+(76) df 61 82 b5 f6 60 c1 82 bd b2 61
+     ^ptr  shi-- ^ptr(-ma)ta--- ^ptr
+
+Alright, so it looks like that pointer "f6 60" decodes to 82 dc 82, "ma liltsu(1/2)", which is only really possible if it can reference text that's already been decoded! So I should probably figure out what the offsets will be when it's decoded.
+
+(ed)
