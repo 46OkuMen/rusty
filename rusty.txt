@@ -131,3 +131,31 @@ prolly fuckin ctrl codes
 Alright, so it looks like that pointer "f6 60" decodes to 82 dc 82, "ma liltsu(1/2)", which is only really possible if it can reference text that's already been decoded! So I should probably figure out what the offsets will be when it's decoded.
 
 (ed)
+
+the pointer [0x00 0x00] points to 30 2e a3, which is 8 before it (0x12 abs) and 3 bytes long.
+
+the pointer [0x07 0x00] points to ca 30 2e, which is 16 before it (0x19 abs) and 3 bytes long.
+
+the pointer [0x34 0x00] points to 2e c7 06, which is 17 before it (0x46 abs) and 3 bytes long. (x46-x34= 0x12)
+
+the pointer [0x38 0x00] points to 30 00 00, which is 17 before it (0x4a abs) and 3 bytes long. (x4a-x38= 0x12)
+
+the pointer [0x44 0x01] points to 30 2e c7 06, which is 15 before it (0x56 abs) and 4 bytes long. (x56-x44=18 decimal)
+
+the pointer [0x38 0x00] points to 30 00 00, which is at 0x4a abs and 3 bytes long. (0x4a-0x38 = 0x12)
+0x38 + 0x12 = 0x4a
+
+the pointer [0x4c 0x14] points to 00 ad 05 06 00 26 a3, which is at 0x15e and 7 bytes long. (0x14c+0x12=0x15e)
+
+the pointer [0x4a 0x30] points to c2 c1 e0, which is at 0x35c and is 3 bytes long. (0x34a+0x12=0x35c)
+
+the pointer [0xe2 0xf9] points to 00 00 00 00 00 00 00 00 00 00 00 00, which is in an empty part of the buffer and is 12 bytes long...
+So the buffer should be initialized with 00s, I guess.
+
+the pointer [0x39 0x20] points to ab ab ab, which is at 0x24b and is 3 bytes long. (0x239+0x12= (oh cool, you can also point to stuff you're writing!)
+
+the pointer [0x59 0x02] points to 6b 45 01 c5 05, which is at 0x106b and is 5 bytes long. (It's a 0x1000-long circular buffer, so write decompressed bytes to cursor % 0x1000)
+
+the pointer [0xd1 0xc2] points to 00 00 00 06 07, which is... nowhere? 
+0607 appears at 0x1e05 and 0x28c8 before this, and would show up in the buffer at offset 0x8c8.
+The value that's getting written is 5 00's, like at 0x2ce3.
