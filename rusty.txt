@@ -159,3 +159,30 @@ the pointer [0x59 0x02] points to 6b 45 01 c5 05, which is at 0x106b and is 5 by
 the pointer [0xd1 0xc2] points to 00 00 00 06 07, which is... nowhere? 
 0607 appears at 0x1e05 and 0x28c8 before this, and would show up in the buffer at offset 0x8c8.
 The value that's getting written is 5 00's, like at 0x2ce3.
+
+=== Weird Font Stuff ===
+There's totally half-width letter stuff in there. Just gotta look for it.
+I see an a, I see a g.
+a = 00?
+g = 06?
+
+There is indeed FONT.DAT, but it's for the UI that's already in English at the bottom of the screen. Flames, clocks, card suits, etc...
+
+VISUAL.COM ignores ascii characters, putting spaces instead.
+
+=== MGX images ===
+I'm pretty sure the opening cinematic is not text at all, but MGX graphics. Same for the ending credits, but they're English already.
+
+The MGX header begins with MAKI02A.
+MAG/MAX -> MAKI02... (Rusty MAGs begin with "MAKI02  MPS  RUSTY".)
+MKI -> MAKI01A or MAKI01B.
+So I'd need to learn about the MAG and MKI families of compression. MGX is probably similar.
+
+R_A11.MGX = first image, castle
+R_A21.MGX = hall of shadowy figures
+R_A23.MGX = first text?
+R_A24.MGX = red haired lady
+Renamed R_A23.MGX to R_A21.MGX. Shows the first text on top of the mountain.
+Renamed R_A24.MGX to R_A21.MGX. Shows the red haired lady on top of the mountain.
+
+Nope, can't get it to load .MAG files in the intro just by putting MAG filenames in. Sad...
