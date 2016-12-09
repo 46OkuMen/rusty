@@ -160,6 +160,32 @@ the pointer [0xd1 0xc2] points to 00 00 00 06 07, which is... nowhere?
 0607 appears at 0x1e05 and 0x28c8 before this, and would show up in the buffer at offset 0x8c8.
 The value that's getting written is 5 00's, like at 0x2ce3.
 
+=== Control codes ===
+VISUAL.COM:
+040073 = <LN>
+0F5F45011D05 = slow down?
+0f5f seems necessary. Replacing it with spaces causes a freeze.
+4501 has no discernable difference when removed...?
+1d05 also has no discernible function.
+7705 appears to be a graphical thing?
+
+6b4501 shows up a lot... Really, 6x4501 shows up a lot.
+
+VS1_00.MAG = graveyard background
+VS1_01.MAG = group of four people
+VS1_02.MAG = old guy
+VS1_03.MAG = kids
+VS1_04.MAG = dominatrix
+
+Stuff that might happen with control codes:
+Highlighting different portraits
+Changing text color
+Line breaks
+Scrolling to the next line
+Overwriting previous text???
+Clearing the screen
+Going back to the top line
+
 === Weird Font Stuff ===
 There's totally half-width letter stuff in there. Just gotta look for it.
 I see an a, I see a g.
@@ -167,7 +193,10 @@ a = 00?
 g = 06?
 
 There is indeed FONT.DAT, but it's for the UI that's already in English at the bottom of the screen. Flames, clocks, card suits, etc...
-
+It does get used for the BGM song titles, which are encoded in plain ascii (somewhere). It's all caps and 16x16 with shadow information too.
+You can look at it in YY-CHR with the format 1BPP (16x16).
+Try some other .DAT files too??
+ 
 VISUAL.COM ignores ascii characters, putting spaces instead.
 
 === MGX images ===
@@ -186,3 +215,7 @@ Renamed R_A23.MGX to R_A21.MGX. Shows the first text on top of the mountain.
 Renamed R_A24.MGX to R_A21.MGX. Shows the red haired lady on top of the mountain.
 
 Nope, can't get it to load .MAG files in the intro just by putting MAG filenames in. Sad...
+
+R_A23.MGX
+Deleted last 4 6's: no discernible effect
+Deleted the last 10% or so: It's like I took an eraser to the last row: a lot gone, but lots of scattered pixels remaining. Hm.

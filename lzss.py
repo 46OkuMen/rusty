@@ -124,7 +124,7 @@ def compress(filename):
     target_filepath = os.path.join(directory, filename)
     with open(target_filepath, 'rb') as f:
         target_bytes = f.read()
-    compressed_filepath = os.path.join(directory, 'compressed_' + filename)
+    compressed_filepath = os.path.join(directory, filename.lstrip('decompressed_'))
     with open(compressed_filepath, 'wb') as f:
         # Write the header first.
         f.write(b'\x4c\x5a\x1a') # magic number
@@ -153,6 +153,7 @@ def compress(filename):
 
 if __name__ == '__main__':
     #targets = lzss_files
+    #targets = ['VISUAL.COM',]
     #for t in targets:
     #    decompress(t)
     compress('decompressed_VISUAL.COM')
