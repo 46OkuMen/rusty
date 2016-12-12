@@ -1,11 +1,10 @@
 FILE FORMATS
 .M, .M2 - music, for PMD
-.MAG - large image?
-.MGX - ?
+.MAG - large image
+.MGX - weird new graphics format
 .COM - executable, usually has text n stuff
-.TBL - ?
-.DAT - ?
-.RGB - ?
+.TBL / .DAT - some kind of tileset thing?
+.RGB - some kind of graphics?
 .MAP - ?
 .FOT - ?
 .PPL - SFX?
@@ -219,3 +218,23 @@ Nope, can't get it to load .MAG files in the intro just by putting MAG filenames
 R_A23.MGX
 Deleted last 4 6's: no discernible effect
 Deleted the last 10% or so: It's like I took an eraser to the last row: a lot gone, but lots of scattered pixels remaining. Hm.
+
+The image is probably 640 (0x280) wide, and like 276/2 tall (0x8a)
+
+Magv2-like header?
+No metadata or anything, just 1a
+start of header is 0x09
+
+00 - start of header
+00 - computer model code (means PC-98)
+00 - model-dependent flags (16 colors, analog, 400+ rows, PC-98)
+00 - screen mode (irrelevant?
+13 00 - x coord for left edge (=19) (gets padded to a multiple of 4 bytes)
+80 00 - y coord for top edge (=128)
+74 02 - x coord for right edge (=628)
+0f 01 - y coord for bottom edge (=271) - this value is a little suspect
+50 00 00 00 - offset from start of header to 'flag A' buffer    (0x59)
+ba 05 00 00 - offset from start of header to 'flag B' buffer    (0x5c3)
+fc 08 00 00 - size of 'flag B' section, in bytes                (0x8fc)
+b6 0e 00 00 - offset from start of header to color index stream (0xebf)
+d0 09 00 00 - size of pixel color section, in bytes             (0x9d0)
