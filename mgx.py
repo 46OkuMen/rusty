@@ -14,16 +14,25 @@ bits = [0b10000000,
         0b00000010,
         0b00000001]
 
+# x and y relative values for different Action nibble values.
+action_dx = [0,1,2,4,0,1,0,1,2,0,1,2,0,1,2,0]
+action_dy = [0,0,0,0,1,1,2,2,2,4,4,4,8,8,8,16]
+
 def read_little_endian(file, bytes):
     result = 0
     for i in range(1, bytes+1):
         result += ord(file.read(1)) << (8*(i-1))
     return result
 
+def write_little_endian(file, number, bytes=1):
+    for i in range(1, bytes+1):
+        shift = 8*(i-1)
+        value = (number & (0xff << shift)) >> shift
+        file.write(chr(value))
+
 
 def decompress(filename):
     with open(filename, 'rb') as f:
-        file_bytes = f.read()
         f.seek(0, 0)
         magic_word = f.read(9)
         assert magic_word == b'MAKI02A \x1a'
@@ -37,24 +46,36 @@ def decompress(filename):
         y1 = read_little_endian(f, 2)
         assert y1 == 271
 
+        # pad left and right edges to multiples of 4.
+        while x0 % 4 != 0:
+            x0 -= 1
+        while x1 % 4 != 0:
+            x1 += 1
+
         pixel_row_width = x1 - x0
-        # pad the row width to a multiple of four bytes
-        while pixel_row_width % 4 == 0:
-            pixel_row_width += 1
+        print pixel_row_width, pixel_row_width/8
 
         flag_a_offset = read_little_endian(f, 4)
         assert flag_a_offset == 0x50
         flag_b_offset = read_little_endian(f, 4)
         assert flag_b_offset == 0x5ba
         flag_b_size = read_little_endian(f, 4)
+        color_index_stream_offset = read_little_endian(f, 4)
         color_index_stream_size = read_little_endian(f, 4)
-        pixel_color_size = read_little_endian(f, 4)
+
 
         flag_a_location = flag_a_offset + 9
         flag_b_location = flag_b_offset + 9
+        color_index_stream_location = color_index_stream_offset + 9
+
+        print flag_b_size
+        print color_index_stream_offset
+        print color_index_stream_size
+
+        print hex(flag_a_location), hex(flag_b_location), hex(color_index_stream_location)
+
 
         flag_a_size = flag_b_location - flag_a_location # right?
-        print flag_a_size
 
         palette = []
         for i in range(0, 16):
@@ -74,25 +95,56 @@ def decompress(filename):
         f.seek(0, 0)
         f.seek(flag_b_location)
         flag_b = f.read(flag_b_size)
+        flag_b = [ord(b) for b in flag_b]
 
         # One pixel row's worth of Flag B bytes
-        action = []
+
+        action = [0]*(pixel_row_width//8)
 
         # Stream of 16-bit values, either four 4-bit colors or two 8-bit colors
         # (4-bit colors for 16-color mode?)
-        color = []
+        f.seek(0, 0)
+        f.seek(color_index_stream_location)
+        color_index_stream = f.read(color_index_stream_size)
+        color_index_stream = [(ord(c) << 8) + ord(color_index_stream[(i*2)+1]) for i, c in enumerate(color_index_stream[::2])]
 
         # Array of 16-bit values
+        #output = [0]*pixel_row_width * ((y1 - y0)//2)
         output = []
 
+        b_cursor = -1
+        action_cursor = -1
+        color_cursor = -1
         for a in flag_a:
-            b_cursor = 0
-            action_cursor = 0
             # read bits from highest to lowest bit
             for bit in bits:
                 if a & bit:
-                    # read th enext flag B byte and XOR the next value in the Action buffer with it
-                    print a
+                    # read the next flag B byte and XOR the next value in the Action buffer with it
+                    b_cursor += 1
+                    if action_cursor >= len(action)-1:
+                        action[0] = action[0] ^ flag_b[b_cursor]
+                    else:
+                        action[action_cursor+1] = action[action_cursor+1] ^ flag_b[b_cursor]
+
+                action_cursor += 1
+                if action_cursor >= len(action):
+                    action_cursor = 0
+
+                action_t = (action[action_cursor] & 0xf0) >> 4
+                action_b = action[action_cursor] & 0xf
+                
+                for nibble in (action_t, action_b):
+                    if nibble == 0:
+                        color_cursor += 1
+                        output.append(color_index_stream[color_cursor])
+                    else:
+                        copy_location = len(output) - action_dx[nibble] - (pixel_row_width*action_dy[nibble])
+                        print output
+                        assert copy_location > 0, (nibble, len(output), copy_location)
+                        #print nibble, action_dx[nibble], (pixel_row_width*action_dy[nibble])
+                        output.append(output[copy_location])
+                #print output
+
                 # read the next Action buffer byte; loop to the beginning if went past the end of the buffer
                 # use the top nibble of the Aciton byte to get a 16-bit value (see the site);
                     # (it's complicated)
@@ -101,4 +153,56 @@ def decompress(filename):
                 # repeat until one of the buffers runs out
 
 
-decompress('R_A11.MGX')
+def compress(filename):
+    im = Image.open(filename)
+    print im.size
+
+    palette = [b'\x00\x00\x00', b'\x00\x00\x77', b'\x00\x77\x00', b'\x00\x77\x77',
+               b'\x77\x00\x00', b'\x77\x00\x77', b'\x77\x77\x00', b'\x77\x77\x77',
+               b'\xaa\xaa\xaa', b'\x00\x00\xff', b'\x00\xff\x00', b'\x00\xff\xff',
+               b'\xff\x00\x00', b'\xff\x00\xff', b'\xff\xff\x00', b'\xff\xff\xff'
+              ]
+
+    with open('R_A11.MGX', 'wb') as f:
+        x0 = 19
+        y0 = 128
+        x1 = 628
+        y1 = 271
+
+        flag_a_location = 0x50
+        flag_b_location = 0x5ba
+        color_index_stream_location = 0xeb6
+
+        flag_a_size = flag_b_location - flag_a_location
+        flag_b_size = color_index_stream_location - flag_b_location
+        color_index_stream_size = 2512
+
+        f.write(b'MAKI02A ') # magic word
+        f.write(b'\x1a\x00\x00\x00\x00') # beginning of header, screen modes
+        write_little_endian(f, x0, 2)
+        write_little_endian(f, y0, 2)
+        write_little_endian(f, x1, 2)
+        write_little_endian(f, y1, 2)
+        write_little_endian(f, flag_a_location, 4)
+        write_little_endian(f, flag_b_location, 4)
+        f.write(b'\xfc\x08\x00\x00\xb6\x0e\x00\x00\xd0\x09\x00\x00') # B size, color stream stuff
+        f.write(''.join([p for p in palette]))
+        f.write('\x00'*flag_a_size)
+        f.write('\xFF'*flag_b_size)
+
+        image = im.load()
+        print im.size
+        for row in range(1, im.size[1]):
+            for col in range(0, im.size[0]):
+                if image[col, row]:
+                    f.write('\xFF')
+                else:
+                    f.write('\x00')
+
+
+
+compress('white_square.bmp')
+
+
+
+#decompress('R_A11.MGX')
