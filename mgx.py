@@ -163,6 +163,10 @@ def compress(filename):
                b'\xff\x00\x00', b'\xff\x00\xff', b'\xff\xff\x00', b'\xff\xff\xff'
               ]
 
+    BW_palette = [b'\x00\x00\x00']
+    BW_palette.extend([b'\xFF\xFF\xFF']*15)
+    print BW_palette
+
     with open('R_A11.MGX', 'wb') as f:
         x0 = 19
         y0 = 128
@@ -170,12 +174,12 @@ def compress(filename):
         y1 = 271
 
         flag_a_location = 0x50
-        flag_b_location = 0x5ba
-        color_index_stream_location = 0xeb6
+        flag_b_location = 0x7ba
+        color_index_stream_location = 0x10b5
 
         flag_a_size = flag_b_location - flag_a_location
         flag_b_size = color_index_stream_location - flag_b_location
-        color_index_stream_size = 2512
+        color_index_stream_size = 20000
 
         f.write(b'MAKI02A ') # magic word
         f.write(b'\x1a\x00\x00\x00\x00') # beginning of header, screen modes
@@ -185,16 +189,21 @@ def compress(filename):
         write_little_endian(f, y1, 2)
         write_little_endian(f, flag_a_location, 4)
         write_little_endian(f, flag_b_location, 4)
-        f.write(b'\xfc\x08\x00\x00\xb6\x0e\x00\x00\xd0\x09\x00\x00') # B size, color stream stuff
-        f.write(''.join([p for p in palette]))
+        write_little_endian(f, flag_b_size, 4)
+        write_little_endian(f, color_index_stream_location, 4)
+        write_little_endian(f, color_index_stream_size, 4)
+        f.write(''.join([p for p in BW_palette]))
         f.write('\x00'*flag_a_size)
-        f.write('\xFF'*flag_b_size)
+        f.write('\x00'*flag_b_size)
 
         image = im.load()
         print im.size
-        for row in range(1, im.size[1]):
-            for col in range(0, im.size[0]):
-                if image[col, row]:
+        for row in range(0, im.size[1]):
+            # 16-color image, so each pixel is 4 bits.
+            # Gotta use groups of two bytes.
+            # So encode 2 bytes if 4 pixels in a row are white??
+            for col in range(0, im.size[0], 2):
+                if image[col, row] and image[col+1, row]:
                     f.write('\xFF')
                 else:
                     f.write('\x00')
