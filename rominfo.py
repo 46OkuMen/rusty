@@ -1,21 +1,29 @@
-FILES = ['VISUAL.COM', 'STORY.COM']
+FILES = ['JO.EXE', 'VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM',
+         'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
+         'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']
 
 FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x17ef), # vs1-2
-                              (0x1899, 0x1971), # vs3
-                              (0x1a7e, 0x1dc2), # vs4
-                              (0x1ea4, 0x21ec), # vs5
-                              (0x22ad, 0x288d), # vs6
-                              (0x2a7f, 0x2d11), # ending1
+                              (0x1899, 0x18b1),
+                              (0x18f7, 0x1971), # vs3
+                             # (0x1a7e, 0x1dc2), # vs4
+                             # (0x1ea4, 0x21ec), # vs5
+                             # (0x22ad, 0x288d), # vs6
+                             # (0x2a7f, 0x2d11), # ending1
                               (0x2d52, 0x2ff5),], # ending2]
 
-               'OP.COM': [(0x55b, 0x646),], # not compressed; not sure what it is
-               'JO.EXE': [(0x6c23, 0x6cd8), # main menu, options
-               	          (0x6cd3, 0x6cee),
-               	          (0x6d5a, 0x6db5),
-               	          (0x6e96, 0x6ef0),
-               	          (0x6f7e, 0x7022),]
+               #'OP.COM': [(0x55b, 0x646),], # not compressed; not sure what it is
+               # (joke messages about being really hungry, among others)
+               'JO.EXE':     [(0x6c5c, 0x6cb8),
+                              (0x6cd3, 0x6cee), # main menu, options
+               	          (0x6d5a, 0x6d83),
+                              (0x6d99, 0x6db5),
+               	          (0x6e96, 0x6ebe),
+                              (0x6ed4, 0x6ef0),
+               	          (0x6f7e, 0x6fa9),
+                              (0x6fb3, 0x6fc7),
+                              (0x6fea, 0x7022),],
 
-			   'STORY1.COM': [(0x32a2, 0x346f),],
+			'STORY1.COM': [(0x32a2, 0x346f),],
                'STORY2.COM': [(0x3490, 0x35ba),],
                'STORY3.COM': [(0x3584, 0x3789),],
                'STORY4.COM': [(0x28b1, 0x2979),],
@@ -38,6 +46,3 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x17ef), # vs1-2
                'ENEMY9.COM': [(0x4129, 0x4206),],
                'ENEMY10.COM': [(0x403f, 0x44ef),],
                }
-
-# Stuff I know I'm still looking for:
-# opening cinematic (likely in images, in R_***.MGX files)
