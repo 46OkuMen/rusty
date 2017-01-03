@@ -198,6 +198,15 @@ Try some other .DAT files too??
  
 VISUAL.COM ignores ascii characters, putting spaces instead.
 
+20 chrs per line, 32 pixels per chr = 640 pixels on the screen.
+
+What gets increased by 32 after every character? (32 pixels)
+EDI goes from 6900 - 694c on the first line, ...
+(That's probably telling it to load various bytes from locations)
+
+32 = 0x20, so look for 20s in the unassemble
+8312:4557 a820 = "test al, 20"
+
 === MGX images ===
 I'm pretty sure the opening cinematic is not text at all, but MGX graphics. Same for the ending credits, but they're English already.
 

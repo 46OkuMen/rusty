@@ -1,6 +1,6 @@
 import os
+import sys
 from bitstring import BitArray
-from finding_stuff import lzss_files
 
 directory = os.curdir + os.sep
 
@@ -76,13 +76,13 @@ def decompress(filename):
 
         flag = f.read(1)
         cursor = 0
-        print hex(cursor), hex(ord(flag)), ":",
+        #print hex(cursor), hex(ord(flag)), ":",
         while flag != "":
             things = interpret_flag(ord(flag))
             for literal in things:
                 if literal:
                     literal_byte = ord(f.read(1))
-                    print hex(literal_byte),
+                    #print hex(literal_byte),
                     buf[cursor % 0x1000] = literal_byte
                     output.append(literal_byte)
                     cursor += 1
@@ -91,12 +91,12 @@ def decompress(filename):
                         pointer_bytes = ord(f.read(1)), ord(f.read(1))
                     except TypeError:
                         break
-                    print "[%s %s]" % (hex(pointer_bytes[0]), hex(pointer_bytes[1])),
+                    #print "[%s %s]" % (hex(pointer_bytes[0]), hex(pointer_bytes[1])),
                     packed = pointer_pack(pointer_bytes[0], pointer_bytes[1])
                     length = pointer_length(packed)
                     offset = pointer_offset(packed)
-                    if offset >= (cursor+0x12):
-                        print "compressed zeroes",
+                    #if offset >= (cursor+0x12):
+                    #    print "compressed zeroes",
 
                     # Sometimes it does a cool thing where it points to bytes
                     # as it's writing them!!
@@ -106,13 +106,14 @@ def decompress(filename):
                         buf[cursor % 0x1000] = pointed_byte
                         output.append(pointed_byte)
                         cursor += 1
-            print ""
+            #print ""
 
             flag = f.read(1)
             try:
-                print hex(cursor), hex(ord(flag)), ":", 
+                #print hex(cursor), hex(ord(flag)), ":", 
+                _ = hex(ord(flag))
             except TypeError:
-                print "end of input"
+                #print "end of input"
                 break
 
     output_filepath = os.path.join(directory, 'decompressed_' + filename)
@@ -146,9 +147,6 @@ def compress(filename):
                 cursor += 1
                 block_counter -= 1
 
-
-
-
 # header: 4c5a ("LZ"), almost like 4d5a ("MZ"), but suggesting LZ* compression
 
 if __name__ == '__main__':
@@ -156,4 +154,13 @@ if __name__ == '__main__':
     #targets = ['VISUAL.COM',]
     #for t in targets:
     #    decompress(t)
-    compress('decompressed_VISUAL.COM')
+    #compress('decompressed_VISUAL.COM')
+    if len(sys.argv) < 3:
+        print "Usage: python lzss.py [de]compress file.exe"
+        sys.exit()
+    if sys.argv[1].lower() == 'decompress':
+        decompress(sys.argv[2])
+        print "Wrote file to 'decompressed_" + sys.argv[2] + "'"
+    elif sys.argv[1].lower() == 'compress':
+        compress(sys.argv[2])
+        print "Wrote file to '" + sys.argv[2].lstrip('decompressed_') + "'"

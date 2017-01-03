@@ -199,14 +199,24 @@ def compress(filename):
         image = im.load()
         print im.size
         for row in range(0, im.size[1]):
-            # 16-color image, so each pixel is 4 bits.
-            # Gotta use groups of two bytes.
-            # So encode 2 bytes if 4 pixels in a row are white??
-            for col in range(0, im.size[0], 2):
-                if image[col, row] and image[col+1, row]:
-                    f.write('\xFF')
+            stored = None
+            # 16-color image, so each pixel is 4 bits...?
+            # I seem to be struggling to get a resolution better than 4 pixels wide.
+            for col in range(0, im.size[0]):
+                if image[col, row]:
+                    if col % 2 == 0:
+                        stored = 0xf
+                    else:
+                        value = (stored << 4) + 0xf
+                        f.write(chr(value))
+                        stored = None
                 else:
-                    f.write('\x00')
+                    if col % 2 == 0:
+                        stored = 0x0
+                    else:
+                        value = (stored << 4) + 0x0
+                        f.write(chr(value))
+                        stored = None
 
 
 
