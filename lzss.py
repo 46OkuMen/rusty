@@ -31,6 +31,12 @@ def pointer_pack(first, second):
     """Ex. pointer_pack(0xab, 0xcd) == 0xabcd"""
     return (first << 8) + second
 
+def write_little_endian(file, number, bytes=1):
+    for i in range(1, bytes+1):
+        shift = 8*(i-1)
+        value = (number & (0xff << shift)) >> shift
+        file.write(chr(value))
+
 def pointer_length(p):
     """The lowest nybble of the pointer is its length, minus 3."""
     return (p & 0xF) + 3
@@ -129,9 +135,11 @@ def compress(filename):
     with open(compressed_filepath, 'wb') as f:
         # Write the header first.
         f.write(b'\x4c\x5a\x1a') # magic number
-        expected_length = little_endianize(len(target_bytes))
-        for b in expected_length:
-            f.write(chr(b))
+        #expected_length = little_endianize(len(target_bytes))
+        write_little_endian(f, len(target_bytes), 2)
+        #for b in expected_length:
+        #    print hex(b)
+        #    f.write(chr(b))
         f.write(b'\x00\x00') # another magic number
 
         cursor = 0

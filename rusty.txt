@@ -207,6 +207,88 @@ EDI goes from 6900 - 694c on the first line, ...
 32 = 0x20, so look for 20s in the unassemble
 8312:4557 a820 = "test al, 20"
 
+Game memory:
+          00000000 +--------------+
+                   |              |
+                   | conventional |
+                   | memory       |
+                   |              |
+                   |              |
+                   |              |
+          000a0000 +--------------+
+                   | text V-RAM   |
+          000a4000 +--------------+
+                   |   graphic    | a8000
+                   |   V-RAM      | b0000
+                   |              | b8000
+          000c0000 +--------------+ 
+                   |  external    |
+                   |  device      |
+          000e0000 +--------------+
+                   |graphic V-RAM | e0000
+          000e4000 +--------------+
+                   |              |
+                   |   BIOS ROM   |
+                   |              |
+          00100000 +--------------+
+                   |              |
+                   | extended     |
+                   | RAM          |
+                   |              |
+                   |              |
+                   |              |
+                   |              |
+                   |              |
+          00f00000 +--------------+
+                   | external     |
+                   | device (1)   |
+          01000000 +--------------+
+                   |              |
+                   |              |
+                   |              |
+
+Found some character looking things at address 0xf9880. (halfwidth hirigana?)
+
+Can't just remove files, the game complains and won't boot if you do that.
+Try corrupting stuff in the System Disk.
+
+CLABLOGO.EXE
+INSTALL.EXE
+JO.EXE
+GAMEDATA.CFG
+SYS_DISK
+CLEAR1.DAT - CLEAR10.DAT
+CURSOL.DAT
+
+KIME.DAT
+PAGE0.DAT - PAGE2.DAT
+.MAGs
+.M and .M2 files
+BOOT.COM
+ENEMY1.COM - ENEMY10.COM
+GRPEGC.COM
+GRPGDC.COM
+MAGLOAD.COM
+ONGCHK.COM
+OP.COM
+PDR.COM
+PMD.COM
+PMDB2.COM
+PPSDRV.COM
+STORY1.COM - STORY10.COM
+VISUAL.COM
+.PPS files (instrument samples?)
+CONFIG.SYS
+CLEAR1 - CLEAR10.TBL
+CURSOL.TBL
+KIME.TBL
+PAGE0 - PAGE2.TBL
+
+Corrupted without corrupting font:
+FONT.DAT (for UI stuff only)
+PAGE0.DAT - Rusty sprites
+
+
 === MGX images ===
 I'm pretty sure the opening cinematic is not text at all, but MGX graphics. Same for the ending credits, but they're English already.
 

@@ -3,7 +3,7 @@
 # But only the opening MGX files are Japanese, so the focus is on them.
 
 from PIL import Image
-from lzss import little_endianize
+from lzss import little_endianize, write_little_endian
 
 bits = [0b10000000,
         0b01000000,
@@ -23,12 +23,6 @@ def read_little_endian(file, bytes):
     for i in range(1, bytes+1):
         result += ord(file.read(1)) << (8*(i-1))
     return result
-
-def write_little_endian(file, number, bytes=1):
-    for i in range(1, bytes+1):
-        shift = 8*(i-1)
-        value = (number & (0xff << shift)) >> shift
-        file.write(chr(value))
 
 
 def decompress(filename):
