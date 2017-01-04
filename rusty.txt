@@ -257,11 +257,8 @@ INSTALL.EXE
 JO.EXE
 GAMEDATA.CFG
 SYS_DISK
-CLEAR1.DAT - CLEAR10.DAT
+CLEAR2.DAT - CLEAR10.DAT
 CURSOL.DAT
-
-KIME.DAT
-PAGE0.DAT - PAGE2.DAT
 .MAGs
 .M and .M2 files
 BOOT.COM
@@ -287,7 +284,66 @@ PAGE0 - PAGE2.TBL
 Corrupted without corrupting font:
 FONT.DAT (for UI stuff only)
 PAGE0.DAT - Rusty sprites
+PAGE1.DAT - whip sprites
+PAGE2.DAT - explosions, statues, pickups, doors?
+KIME.DAT - ??
+CLEAR1.DAT - ?? (maybe the girl's sprites?)
 
+Actually it's just the system font!!
+Load the default auto-generate font in anex86. Each 
+
+82 = $
+91 = B
+B1 = 3
+CC = N
+
+...
+
+Assembly stuff:
+lodsb 
+8312:40bb cmp al, 20
+8312:40bd jb 40c2
+8312:40bf jmp 437d
+->
+8312:437d call 3ffe
+->
+8312:3ffe push ax
+          push cx
+          push ci
+          mov cs:[409d]
+          or ah, ah
+          jnz 402e
+->
+8312:402e mov cs:[409d], 00
+          call 3aa9
+
+
+writes to VRAM in these functions:
+8312:3f2d b800b8   mov ax, b800  (3rd VRAM plane)
+8312:3f30 e80700   call 3f3a
+->
+8312:3f3a 57 push di
+8312:3f3b 8ec0 mov es, ax
+8312:3f3d 8bcd mov cx, bp
+8312:3f3f f3a5 repe movsw
+8312:3f41 03fa add di, dx
+8312:3f43 8bcd mov cx, bp
+8312:3f45 f3a5 repe movsw
+(then an unrolled loop of the last 3 instructions for a while)
+
+8312:3f33 b800e0 mov ax, e000 (extended VRAM plane)
+8312:3f36 e80100 call 3f3a
+
+
+Compare to 80:
+8312:400a 3c80 cmp al, 80
+8312:400c 7210 jb 401e
+8312:400e 3ca0 cmp al, a0
+8312:4010 7204 jb 4016         ->
+8312:4012 3ce0 cmp al, e0
+8312:4014 7208 jb 401e
+
+The first line here is in VISUAL.COM at 0x400a (oh, so VISUAL is loaded at 8312)
 
 === MGX images ===
 I'm pretty sure the opening cinematic is not text at all, but MGX graphics. Same for the ending credits, but they're English already.
