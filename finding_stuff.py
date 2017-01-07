@@ -32,6 +32,12 @@ for file in files:
 		#if f.read().find('\x83\x51\x81\x7c') != -1:
 	#		print file
 
+		# looking for that file at 18b8 in memory while VISUAL.COM is running
+		# (it's JO.EXE)
+		#if f.read().find('\x60\x1e\x06\xbe\x80\x00\x46\x46\xe8\xf3') != -1:
+	#		print file
+
+
 		# looking for all files that begin with the header 'LZ[1a]' (4c5a1a)
 		# (it's a lot of them)
 		if f.read(3) == b'\x4c\x5a\x1a':
@@ -39,8 +45,8 @@ for file in files:
 
 this_dir_files = os.listdir(os.path.curdir)
 this_dir_files.remove('.git')
-for file in this_dir_files:
-	if file.startswith('decompressed_'):
-		with open(file, 'rb') as f:
-			if f.read().find('\x83\x51\x81\x7c') != -1:
-				print file
+#for file in this_dir_files:
+#	if file.startswith('decompressed_'):
+#		with open(file, 'rb') as f:
+#			if f.read().find('\x83\x51\x81\x7c') != -1:
+#				print file

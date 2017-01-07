@@ -1,11 +1,13 @@
 This all begins at segment 8312
 Breakpoint set at reading the first byte of "no", 82 cc, the second character in the first row, at 837fb
 
-40b3 ac lodsb
+40b3: 
+
+40b3 ac lodsb            (reads the first byte)
 40b4 0ac0 or al, al
 40b6 7503 jnz 40bb
 ->
-	40bb 3c20 cmp al, 20
+	40bb 3c20 cmp al, 20      (checks if it's a control code?)
 	40bd 7203 jb 40c2
 	40bf e9bb02 jmp 437d
 	->
@@ -17,7 +19,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 			4001 2e8a269d40 mov ah, cs:[409d]    (05 00 06 00)?
 			4006 0ae4 or ah, ah
 			4008 7524 jnz 402e
-			400a 3c80 cmp al, 80
+			400a 3c80 cmp al, 80          (below 80, it calls 401e, also used for halfwidth kana-ignoring)
 			400c 7210 jb 401e
 			400e eca0 cmp al, a0
 			4010 7204 jb 4016
@@ -237,47 +239,127 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 											404f 7405 jz 4056
 											4051 3d4081 cmp ax, 8140
 											4054 7507 jnz 405d
-											4056 2e8b0a240 mov cx, cs:[40a2]
-											405b eb2d jmp 408a
-
-											406e 2e803efd3f00 cmp cs:[3ffd], 00
-											4074 750f jnz 4085
-											4076 53 push bx
-											4077 52 push dx
-											4078 bb1300 mov bx, 0013
-											407b b600 mov dh, 00
-											407d b81600 mov ax, 0016
-											4080 e88bbf call 000e
 											->
-												000e 50 push ax
-												000f 2ea1cc30 mov ax, cs:[30cc]
-												0013 2ea3c830 mov cs:[30c8], ax
-												0017 2ea1ca30 mov ax, cs:[30ca]
-												001b 2ea3c630 mov cs:[30c6], ax
-												001f 58 pop ax
-												0020 2eff1ec630 call far cs:[30c6]
+												405d 3d4281 cmp ax, 8142
+												4060 7405 jz 4067
+												4062 3d4481 cmp ax, 8144
+												4065 7507 jnz 406e
 												->
-													18b8:63fc 55 push bp
-													63fd bd6063 mov bp, 6360
-													6400 d1e0 shl ax, 1
-													6402 03e8 add bp, ax
+													406e 2e803efd3f00 cmp cs:[3ffd], 00
+													4074 750f jnz 4085
+													4076 53 push bx
+													4077 52 push dx
+													4078 bb1300 mov bx, 0013
+													407b b600 mov dh, 00
+													407d b81600 mov ax, 0016
+													4080 e88bbf call 000e
+													->
+														000e 50 push ax
+														000f 2ea1cc30 mov ax, cs:[30cc]
+														0013 2ea3c830 mov cs:[30c8], ax
+														0017 2ea1ca30 mov ax, cs:[30ca]
+														001b 2ea3c630 mov cs:[30c6], ax
+														001f 58 pop ax
+														0020 2eff1ec630 call far cs:[30c6]
+														->
+															18b8:63fc 55 push bp
+															63fd bd6063 mov bp, 6360
+															6400 d1e0 shl ax, 1
+															6402 03e8 add bp, ax
+															6404 call cs:[bp+00]
+															->
+																18b8:69ac 60 pusha
+																69ad 1e push ds
+																69ae 06 push es
+																69af b89f1f mov ax, 1f9f
+																69b2 8ec0 mov es, ax
+																69b4 26803e922a00 cmp es:[2a92], 00
+																69ba 7416 jz 69d2
+
+															(How'd I get here?)
+																fd80:022d push ds
+																022e xor ax, ax
+																8ed8 mov ds, ax
+																0232 e44e in al, 43
+																0234 test al, 38
+																0236 jnz 025a
+																0238 mov al, 16
+																023a out 43, al
+																023c mov [0529], 00
+																0241 in al, 41
+																0243 mov ah, al
+																0245 call 0088
+																->
+																	nop ret
+																	<-
+																0248 pop ds
+																0249 cli
+																024a mov al, 20
+																024c out 00, al
+																024e cmp ah, 60
+																0253 cmp ah, 61
+																0256 jz 026d
+																0258 pop ax
+																0259 iret
+																<-
+															18b8:69ad push ds
+															->
+																(how'd I get here again?)
+																fd80:022d (detailed above)
+															69ae push es
+															69af mov ax, 1f9f
+															69b2 mov es, ax
+															69b4 cmp es:[2a92], 00
+															69ba jz 69d2
+
+										The "display stuff" routine is somewhere in the 18b8 segment.
+										18b8:1650 50 push ax
+										1651 2eff066d16 inc word ptr cs:[166d]
+										1656 b022 mov al, 22
+										1658 e600 out 00, al
+										165a e664 out 64, al
+										165c 58 pop ax
+										165d fb sti      <- here it is??? The character is displayed after this instruction.
+										165e cf iret
 
 
 
+			4012 3ce0 cmp al, e0      (branch between a0 and e0 = halfwidth kana??)
+			4014 7208 jb 401e         (now, what happens in 401e? put some halfwidth kana in and find out)
+			4016 2ea29d40 mov cs:[409d], al
+			401a 33c9 xor cx, cx
+			401c eb6c jmp 408a
 
 
 
-						400a 3c80 cmp al, 80
-						400c 7210 jb 401e
-						400e 3ca0 cmp al, a0
-						4010 7204 jb 4016
+HALFWIDTH KANA a8:
 
+starting at that jump to 401e:
+401e e888fa call 3aa9
+->
+	3aa9 60 pusha  (this is detailed above already. Just the text routine without the 'load 2nd byte' bit)
+	3aaa 06 push es
+	3aab fc cld
+	3aac 8ccb mov bx, cs
+	...
+	...
 
+lots of moves (movsw) from DS:SI to ES:DI, or 62f6:2482 () to b800:2832 (3rd VRAM plane)
 
+loop with counter BX at 05: (row? Starts at like x18)
+	inner loop with counter CX at 02: (column? starts at like x7)
+		SI goes up: 24bc +1 each CX loop
+		DI (VRAM index) goes up: 27e0 +1 each CX loop
+	DI (VRAM index) goes up by DX: 282e
 
-
+	
 
 
 Some questions:
-Which file is at x18b8?
+Which file is at x18b8? (it's JO.EXE)
 So, where is the font held in memory??
+	Loaded the FONT.ROM, skye_FONT.ROM, and Portuguese EVO font, checked diffs.
+	Looks like it may be from about 0x86d27 to 0x86f3b.
+	Can't get it to look like a font in yy-chr though... I wonder if that's really it
+
+What is at segment 62f6? Starts with 5a 00 a0 02 e6 04 2c 07 b2 0a 38 0e be 11 64 14.

@@ -85,7 +85,7 @@ for gamefile in FILES:
                             sjis_buffer += '[SCRL]'
                         else:
                             sjis_buffer += '[PAUSE]'
-                            cursor -= 1
+                            cursor -= 1 
 
                 # [1416] animation control code, advances BG frames in VS3
                 elif ord(contents[cursor]) == 0x14 and cursor < block_length-1:
