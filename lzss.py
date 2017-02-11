@@ -2,7 +2,7 @@ import os
 import sys
 from bitstring import BitArray
 
-directory = os.curdir + os.sep
+directory = ""
 
 # Methods for dealing with flags.
 # 0: pointer
@@ -70,7 +70,7 @@ assert pointer_offset(0x3920) == 0x24b
 def decompress(filename):
     output = []
     buf = [0] * 0x1000
-    target_filepath = os.path.join(directory, 'RUSTY', filename)
+    target_filepath = filename
     with open(target_filepath, 'rb') as f:
         #header = f.read(7) # 4c 5a 1a 3e 46 00 00
         # header stuff
@@ -82,13 +82,13 @@ def decompress(filename):
 
         flag = f.read(1)
         cursor = 0
-        #print hex(cursor), hex(ord(flag)), ":",
+        print hex(cursor), hex(ord(flag)), ":",
         while flag != "":
             things = interpret_flag(ord(flag))
             for literal in things:
                 if literal:
                     literal_byte = ord(f.read(1))
-                    #print hex(literal_byte),
+                    print hex(literal_byte),
                     buf[cursor % 0x1000] = literal_byte
                     output.append(literal_byte)
                     cursor += 1
@@ -97,12 +97,10 @@ def decompress(filename):
                         pointer_bytes = ord(f.read(1)), ord(f.read(1))
                     except TypeError:
                         break
-                    #print "[%s %s]" % (hex(pointer_bytes[0]), hex(pointer_bytes[1])),
+                    print "[%s %s]" % (hex(pointer_bytes[0]), hex(pointer_bytes[1])),
                     packed = pointer_pack(pointer_bytes[0], pointer_bytes[1])
                     length = pointer_length(packed)
                     offset = pointer_offset(packed)
-                    #if offset >= (cursor+0x12):
-                    #    print "compressed zeroes",
 
                     # Sometimes it does a cool thing where it points to bytes
                     # as it's writing them!!
@@ -112,11 +110,11 @@ def decompress(filename):
                         buf[cursor % 0x1000] = pointed_byte
                         output.append(pointed_byte)
                         cursor += 1
-            #print ""
+            print ""
 
             flag = f.read(1)
             try:
-                #print hex(cursor), hex(ord(flag)), ":", 
+                print hex(cursor), hex(ord(flag)), ":", 
                 _ = hex(ord(flag))
             except TypeError:
                 #print "end of input"
@@ -135,11 +133,7 @@ def compress(filename):
     with open(compressed_filepath, 'wb') as f:
         # Write the header first.
         f.write(b'\x4c\x5a\x1a') # magic number
-        #expected_length = little_endianize(len(target_bytes))
         write_little_endian(f, len(target_bytes), 2)
-        #for b in expected_length:
-        #    print hex(b)
-        #    f.write(chr(b))
         f.write(b'\x00\x00') # another magic number
 
         cursor = 0
@@ -154,6 +148,11 @@ def compress(filename):
                     break
                 cursor += 1
                 block_counter -= 1
+        # Pad the last flag with 0x00 bytes to fill it up
+        while block_counter:
+            f.write(b'\x00')
+            block_counter -= 1
+
 
 # header: 4c5a ("LZ"), almost like 4d5a ("MZ"), but suggesting LZ* compression
 
