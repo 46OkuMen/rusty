@@ -1,14 +1,11 @@
 import os
 
-dir = os.path.join(os.path.curdir, 'RUSTY')
-
 
 lzss_files = []
-files = os.listdir(dir)
+files = os.listdir('original')
 
-files.remove('rusty.hdi')
 for file in files:
-	with open(os.path.join(dir, file), 'rb') as f:
+	with open(os.path.join('original', file), 'rb') as f:
 		## looking for "ko-no-(hen)" SJIS
 		# (it's in VISUAL.COM)
 		#if f.read().find('\x82\xb1\x82\xcc\x95\xd3') != -1:
@@ -38,13 +35,19 @@ for file in files:
 	#		print file
 
 
+		# look for the code "mov al, [si]"
+		# (it's JO.EXE)
+		if f.read().find('\x8a\x04\x0a\xc0\x74\x7a\x3c\x0d\x74\x36\x3c') != -1:
+			print file
+
+		# TODO: Surely this isn't the right way to do this. Pretty shameful
 		# looking for all files that begin with the header 'LZ[1a]' (4c5a1a)
 		# (it's a lot of them)
 		if f.read(3) == b'\x4c\x5a\x1a':
 			lzss_files.append(file)
 
-this_dir_files = os.listdir(os.path.curdir)
-this_dir_files.remove('.git')
+#this_dir_files = os.listdir(os.path.curdir)
+#this_dir_files.remove('.git')
 #for file in this_dir_files:
 #	if file.startswith('decompressed_'):
 #		with open(file, 'rb') as f:

@@ -1,0 +1,9 @@
+STORY2.COM stuff
+
+Displays halfwidth characters right away, but only displays every other character. "Hello there!" -> "H l o t e e "
+
+The game reads the pointer [si], which has the value 3920 - and text begins at offset 3920 in STORY2.COM, loads it into al, and does some stuff
+
+There's an "inc si" (46) instruction shortly after this. This sets it to 3921. But it never reads the value at 3921, it just skips to 3922 the next time it loads that value.
+
+If I change this 46 (19fb:61b4), or 61b4 in JO.EXE, to a 90 (nop), it'll read every letter at least. It still spaces em out of course, and it reads twice as many characters as it should, so it loops around the screen! (And spits out garbage when there are fullwidth characters, but who cares about that)
