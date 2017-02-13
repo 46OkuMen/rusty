@@ -1,6 +1,6 @@
 JO.EXE HALFWIDTH TEXT HACK:
-change the value at 0x20193 from 04 to 02 (19fb:61e3?)
-If I change this 46 (19fb:61b4), or 61b4 in JO.EXE, to a 90 (nop), it'll read every letter at least.
+change the value at 0x20193 from 04 to 02 (19fb:61e3?) 0x5b97
+If I change this 46 (19fb:61b4), or 5f68 in JO.EXE, to a 90 (nop), it'll read every letter at least.
 
 How I arrived at that conclusion:
 STORY2.COM stuff
@@ -11,7 +11,7 @@ The game reads the pointer [si], which has the value 3920 - and text begins at o
 
 There's an "inc si" (46) instruction shortly after this. This sets it to 3921. But it never reads the value at 3921, it just skips to 3922 the next time it loads that value.
 
-If I change this 46 (19fb:61b4), or 61b4 in JO.EXE, to a 90 (nop), it'll read every letter at least. It still spaces em out of course, and it reads twice as many characters as it should, so it loops around the screen! (And spits out garbage when there are fullwidth characters, but who cares about that)
+If I change this 46 (19fb:61b4), or 5f68 in JO.EXE, to a 90 (nop), it'll read every letter at least. It still spaces em out of course, and it reads twice as many characters as it should, so it loops around the screen! (And spits out garbage when there are fullwidth characters, but who cares about that)
 
 SPACES
 Fullwidth chars are 32x32, halfwidth chars are 16x32. So, look for anything increasing by 0x20 after a SJIS space?
