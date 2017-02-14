@@ -1,4 +1,13 @@
-#FILES = ['JO.EXE']
+import os
+
+# TODO: I really should just make a "Settings" object for this.
+
+SRC_DISK_DIR = 'original\\'
+SRC_DISK_PATH = 'original\\rusty.hdi'
+
+DEST_DISK_DIR = 'patched\\'
+DEST_DISK_PATH = 'patched\\rusty.hdi'
+
 FILES = ['JO.EXE', 'OP.COM', 'VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM',
          'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
          'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']

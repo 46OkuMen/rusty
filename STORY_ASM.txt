@@ -48,3 +48,12 @@ It works too!!
 
 19fb: 61eb 83c102 add cx, +02
 19fb:61ee 83c210 add dx, +10   (this looks like it's meant for halfwidth characters!)
+
+STORY.COM POINTERS
+Hard-coded into the functions
+60 1e 06 8c c8 8e d8 b3 xx yy b9
+60 1e 06 8c c8 8e d8 be xx yy b9
+60 1e 06 8c c8 8e d8 be 4a 33 b9
+
+another pointer is like this:
+                  53 0f 9d_33 51

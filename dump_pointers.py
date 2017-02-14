@@ -4,6 +4,7 @@ import openpyxl
 from collections import OrderedDict
 from romtools.dump import BorlandPointer, PointerExcel
 from romtools.disk import Gamefile
+from rominfo import FILE_BLOCKS
 
 
 #60 1e 06 8c c8 8e d8 be xx yy b9
@@ -25,25 +26,24 @@ def unpack(s, t=None):
     value = (t * 0x100) + s
     return value
 
-pointer_locations = OrderedDict()
-pointer_count = 0
-
+os.remove('rusty_pointer_dump.xlsx')
 PtrXl = PointerExcel('rusty_pointer_dump.xlsx')
 
-for gamefile in ['STORY1.COM',]:
+# TODO: Alphanumeric sort on the files still does STORY1, STORY10, STORY2, etc
+for gamefile in sorted([f for f in FILE_BLOCKS if f.startswith('STORY') or f.startswith('ENEMY')]):
     gamefile_path = os.path.join('original', 'decompressed_' + gamefile)
     print gamefile_path
     GF = Gamefile(gamefile_path)
     with open(gamefile_path, 'rb') as f:
         bytes = f.read()
-        target_area = (0x32a0, len(bytes)) # TODO: Don't hardcode this obviously
-        #print hex(target_area[0]), hex(target_area[1])
+        target_areas = FILE_BLOCKS[gamefile]
 
         only_hex = ""
         for c in bytes:
             only_hex += '\\x%02x' % ord(c)
 
         pointers = capture_pointers_from_function(only_hex)
+        pointer_locations = OrderedDict()
 
         for p in pointers:
             pointer_location = p.start()/4 + 1
@@ -52,26 +52,28 @@ for gamefile in ['STORY1.COM',]:
             pointer_location = '0x%05x' % pointer_location
             text_location = location_from_pointer((p.group(1), p.group(2)),)
 
-            if not target_area[0] <= int(text_location, 16) <= target_area[1]:
+            if not any([t[0] <= int(text_location, 16) <= t[1] for t in target_areas]):
+            #if not target_area[0] <= int(text_location, 16) <= target_area[1]:
                 continue
 
             all_locations = [pointer_location,]
 
-            if (GF.filename, text_location) in pointer_locations:
-                all_locations = pointer_locations[(GF.filename, text_location)]
+            if text_location in pointer_locations:
+                all_locations = pointer_locations[text_location]
                 all_locations.append(pointer_location)
 
-            pointer_locations[(GF, text_location)] = all_locations
+            print GF, text_location
+            pointer_locations[text_location] = all_locations
 
             print text_location
 
     # Setup the worksheet for this file
-    worksheet = PtrXl.add_worksheet(GF.filename)
+    worksheet = PtrXl.add_worksheet(GF.filename.lstrip('decompressed_'))
 
     row = 1
 
-    for (gamefile, text_location), pointer_locations in sorted((pointer_locations).iteritems()):
-        obj = BorlandPointer(gamefile, pointer_locations, text_location)
+    for text_location, pointer_locations in sorted((pointer_locations).iteritems()):
+        obj = BorlandPointer(GF, pointer_locations, text_location)
         print text_location
         print pointer_locations
 
