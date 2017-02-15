@@ -59,3 +59,5 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                'ENEMY9.COM': [(0x4129, 0x4206),],
                'ENEMY10.COM': [(0x403f, 0x44ef),],
                }
+
+STORY_MAX_WIDTH = 34

@@ -2,7 +2,7 @@ import re
 import os
 import openpyxl
 from collections import OrderedDict
-from romtools.dump import BorlandPointer, PointerExcel
+from romtools.dump import BorlandPointer, PointerExcel, unpack
 from romtools.disk import Gamefile
 from rominfo import FILE_BLOCKS
 
@@ -17,16 +17,10 @@ def capture_pointers_from_function(hx):
 def location_from_pointer(pointer):
     return '0x' + str(format((unpack(pointer[0], pointer[1])), '04x'))
 
-def unpack(s, t=None):
-    if t is None:
-        t = str(s)[2:]
-        s = str(s)[0:2]
-    s = int(s, 16)
-    t = int(t, 16)
-    value = (t * 0x100) + s
-    return value
-
-os.remove('rusty_pointer_dump.xlsx')
+try:
+    os.remove('rusty_pointer_dump.xlsx')
+except WindowsError:
+    pass
 PtrXl = PointerExcel('rusty_pointer_dump.xlsx')
 
 # TODO: Alphanumeric sort on the files still does STORY1, STORY10, STORY2, etc
@@ -46,7 +40,7 @@ for gamefile in sorted([f for f in FILE_BLOCKS if f.startswith('STORY') or f.sta
         pointer_locations = OrderedDict()
 
         for p in pointers:
-            pointer_location = p.start()/4 + 1
+            pointer_location = p.start()/4 + 2
 
 
             pointer_location = '0x%05x' % pointer_location

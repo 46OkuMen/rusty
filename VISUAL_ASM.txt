@@ -1,0 +1,17 @@
+Getting the second byte of a two-byte sequence:
+
+mov ah, cs:[409d] (mov ah, 8312:[409d], which holds x82)
+^ 8312:409d is a spot where it keeps the first byte. The first-byte routine has a mov cs:[409d], al instruction.
+	(brackets mean the value at that address)_ASM.txt
+
+Checks to see if al is below 80, then jumps to 401e
+
+What's going on in the seciton where it moves ax to [di], [di+80], [di+180], [di+4], [di+84], [di+104], and [di+184]?
+	It's not VRAM. Just something that a lot of zeroes get written into...?
+
+with both bytes in register a:
+add ah, ah
+sub al, 1f
+EAX= 049e now
+add ax, 1fa1 (now 243f)
+and ax, 7f7f (still 243f)
