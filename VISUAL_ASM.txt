@@ -1,3 +1,8 @@
+VISUAL.COM FAKE HALFWIDTH TEXT HACK:
+0x3ac7 20 -> 1b
+0x403a 04 -> 02
+
+HOW I GOT THERE:
 Getting the second byte of a two-byte sequence:
 
 mov ah, cs:[409d] (mov ah, 8312:[409d], which holds x82)
@@ -9,9 +14,30 @@ Checks to see if al is below 80, then jumps to 401e
 What's going on in the seciton where it moves ax to [di], [di+80], [di+180], [di+4], [di+84], [di+104], and [di+184]?
 	It's not VRAM. Just something that a lot of zeroes get written into...?
 
-with both bytes in register a:
+with both bytes (82bd, "ta") in register a:
+function at 8312:3e37
 add ah, ah
 sub al, 1f
 EAX= 049e now
 add ax, 1fa1 (now 243f)
 and ax, 7f7f (still 243f)
+ret
+sub ax, 2000 (now 043f) <---!!
+out al, al (wonder what this does??)
+mov ah, al (now 0404)
+
+So, do these numbers have anything to do with the coordinates on the font chart?
+font.bmp is 2048 * 2048, with 16x16 characters. So, (0x80)x(0x80) characters. (assuming all are fullwidth)
+	Kind of like the 7f7f thing, right?
+	Yes - "ta" is 04 across, 0x3f down on the font chart!
+	This holds for others, too - "ni" is 04 across, 0x4b down on the font chart.
+
+Now, how can I get it to point to column 9?
+	Add 500 instead of sub 2000? (no)
+	sub 1b00 instead of sub 2000? (write this at 0x86be7)
+	ABCDabcd = chi ti tsu TSU, me mo ya YA =  82bf82c082c182c282df82e082e182e2
+	Yup, it works.
+	Hack: in the string 15 01 e8 72 03 2d 00 20 e6 a1 8a c4 e6 a3, change the 20 to a 1b.
+
+For the second part of the hack: How can I get them to show up adjacent?
+	0x8715c  8312:403a   83c704 add di, +04 <- change this to +02? (yep, this squishes the text)
