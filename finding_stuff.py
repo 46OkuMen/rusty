@@ -1,11 +1,10 @@
 import os
 
 
-lzss_files = []
-files = os.listdir('original')
+files = os.listdir('RUSTY')
 
 for file in files:
-	with open(os.path.join('original', file), 'rb') as f:
+	with open(os.path.join('RUSTY', file), 'rb') as f:
 		## looking for "ko-no-(hen)" SJIS
 		# (it's in VISUAL.COM)
 		#if f.read().find('\x82\xb1\x82\xcc\x95\xd3') != -1:
@@ -37,14 +36,25 @@ for file in files:
 
 		# look for the code "mov al, [si]"
 		# (it's JO.EXE)
-		if f.read().find('\x8a\x04\x0a\xc0\x74\x7a\x3c\x0d\x74\x36\x3c') != -1:
+		#if f.read().find('\x8a\x04\x0a\xc0\x74\x7a\x3c\x0d\x74\x36\x3c') != -1:
+	#		print file
+
+		# looking for the file that gets loaded at 8312:47e0 (it's MAGLOAD.COM)
+		#if f.read().find('\x50\x53\x51\x52\x2e\xa2') != -1:
+	#		print file
+
+		# looking for the file loaded at 8312:47e0 before VISUAL.COM (it's GRPEGC.COM)
+		#if f.read().find('\x06\xd6\x00\xd5\x07\xa5') != -1:
+	#		print file
+
+		if f.read().find('Packed file') != -1:
 			print file
 
 		# TODO: Surely this isn't the right way to do this. Pretty shameful
 		# looking for all files that begin with the header 'LZ[1a]' (4c5a1a)
 		# (it's a lot of them)
-		if f.read(3) == b'\x4c\x5a\x1a':
-			lzss_files.append(file)
+		#if f.read(3) == b'\x4c\x5a\x1a':
+	#		lzss_files.append(file)
 
 #this_dir_files = os.listdir(os.path.curdir)
 #this_dir_files.remove('.git')

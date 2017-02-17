@@ -84,7 +84,7 @@ for gamefile in FILES:
                         if ord(contents[cursor]) == 0x0d:
                             sjis_buffer += '[SCRL]'
                         else:
-                            sjis_buffer += '[PAUSE]'
+                            sjis_buffer += '[PAUSE]'  # I guess this is just 05 1e??
                             cursor -= 1 
 
                 # [1416] animation control code, advances BG frames in VS3

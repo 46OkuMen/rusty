@@ -12,6 +12,8 @@ FILES = ['JO.EXE', 'OP.COM', 'VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.C
          'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
          'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']
 
+UNCOMPRESSED_FILES = ['JO.EXE', 'OP.COM']
+
 FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                               (0x14cd, 0x17ef), # vs2
                               (0x1899, 0x1971), # vs3
@@ -59,5 +61,32 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                'ENEMY9.COM': [(0x4129, 0x4206),],
                'ENEMY10.COM': [(0x403f, 0x44ef),],
                }
+
+CONTROL_CODES = {'[LN]': '\x04\x00\x73',
+                 '[SCRL]': '\x05\x1e\x0d',
+                 '[PAUSE]': '\x05\x1e',
+                 '[0514]': '\x05\x14',
+                 '[053c]': '\x05\x3c',
+                 '[1416]': '\x14\x16',
+                 '[012d06]': '\x01\x2d\x06',
+                 '[012006]': '\x01\x20\x06',
+                 '[1-1d]': '\x01\x1d\x05',
+                 '[1-2c]': '\x01\x2c\x05',
+                 '[1-77]': '\x01\x77\x05',
+                 '[1-86]': '\x01\x86\x05',
+                 '[1-9e]': '\x01\x9e\x05',
+                 '[1-af]': '\x01\xaf\x05',
+                 '[1-c5]': '\x01\xc5\x05',
+                 '[1-da]': '\x01\xda\x05',
+                 '[F-5f]': '\x0f\x5f\x45',
+                 '[F-63]': '\x0f\x63\x45',
+                 '[F-6b]': '\x0f\x6b\x45', 
+                 '[TXT11-71]': '\x15\x11\x71',
+                 '[TXT1a-71]': '\x15\x1a\x71',}
+
+def replace_f_control_codes(s):
+     # use a regex to look for [F-16]
+     pass
+
 
 STORY_MAX_WIDTH = 34
