@@ -1,8 +1,10 @@
 VISUAL.COM REAL HALFWIDTH TEXT HACK:
 0x3ac7 20 -> 1b
 0x403c 04 -> 02
-0x3e3a 1a -> 00
+0x3e39 2c 1a -> 2c 00
 And another thing to handle upper/lowercase text correctly
+
+2c 01, df (should be de)
 
 HOW I GOT THERE:
 Getting the second byte of a two-byte sequence:
@@ -83,6 +85,10 @@ What happens when it processes ascii text?
 
 		Just gotta change the math... How about nop-ing the add al, 1f? (DS:3e3a turns from 1a -> 00
 			Heh. So, the lowercase text is now ROT25.
+				I need to add 1 instead of subtracting 0.
+					Change that whole instruction to 04 01, not b4 00.
+			3e3d: 3c61 cmp al 61
+			3e3f 14de adc al, de (if it's )
 
 IMPORTANT FUNCTIONS/LOCATIONS:
 40b1 lodsb (loads a byte to consider)
@@ -142,3 +148,25 @@ Different approach: What are the pointers for VISUAL.COM?
 		These two files begin at seg 8790.
 
 69 and 73 refer to places * 0x1000 in VRAM. Hence the control codes.
+
+UPPERCASE/LOWERCASE THING
+
+Need to add de to lowercase letters (al >= 61), but df to uppercase letters (else).
+old versions:
+	3e39 2c00 sub al, 00
+	3e3b 7804 js 3e41
+	3e3d 3c61 cmp al, 61
+	3e3f 14de adc al, de
+
+	If I overwrite 4 instructions, that's space for 8 bytes
+	3e39 3c61 cmp al, 61
+	3e3b 7202 jb   3e3f             ----->
+	3e3d 0401 add al, 0                        |
+	3e3f 04de add al, de                    <---
+
+3c617202040104de
+3c617202040004df <- works!
+
+Uh, turns out I really just need to add de to any character. So mostly I can just nop these things.
+
+04df909090909090
