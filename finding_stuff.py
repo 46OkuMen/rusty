@@ -47,7 +47,7 @@ for file in files:
 		#if f.read().find('\x06\xd6\x00\xd5\x07\xa5') != -1:
 	#		print file
 
-		if f.read().find('Packed file') != -1:
+		if f.read().find('\x83\xc1\x04') != -1:
 			print file
 
 		# TODO: Surely this isn't the right way to do this. Pretty shameful

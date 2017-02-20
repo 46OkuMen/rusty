@@ -1,0 +1,32 @@
+JO.EXE
+48d9 20 -> 1d
+
+"Gemu Sotato" = 83 51 etc
+
+8351
+
+At 8790:4857, it does "out a1, al"
+
+mov al, 0b
+out 68, al
+mov ax, [bp+04]
+mov di, [bp+06]
+cmp ah, 00
+jz 4883
+call 48ae
+->
+	48ae cmp ah, 80
+	48b1 jz 48d9
+	48b3 cmp ah, a0
+	48b6 jnb 48bd
+	48b8 sub ah, 70
+	jmp 48c5
+	->
+		or al, al
+		jns 48cb
+		->
+			add ah, ah
+			...
+			dec ah
+			48d7 sub al, 1f
+			48d9 sub ah, 20

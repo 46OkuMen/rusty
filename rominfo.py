@@ -66,10 +66,18 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[SCRL]': '\x05\x1e\x0d',
                  '[PAUSE]': '\x05\x1e',
                  '[0514]': '\x05\x14',
+                 '[052d]': '\x05\x2d',
                  '[053c]': '\x05\x3c',
+                 '[0578]': '\x05\x78',
                  '[1416]': '\x14\x16',
                  '[012d06]': '\x01\x2d\x06',
                  '[012006]': '\x01\x20\x06',
+                 '[012a14]': '\x01\x2a\x14',
+                 '[013914]': '\x01\x39\x14',
+                 '[01f517]': '\x01\xf5\x17',
+                 '[01f017]': '\x01\xf0\x17',
+                 '[017b19]': '\x01\x7b\x19',
+                 '[019019]': '\x01\x90\x19',
                  '[1-1d]': '\x01\x1d\x05',
                  '[1-2c]': '\x01\x2c\x05',
                  '[1-77]': '\x01\x77\x05',
@@ -80,9 +88,11 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[1-da]': '\x01\xda\x05',
                  '[F-5f]': '\x0f\x5f\x45',
                  '[F-63]': '\x0f\x63\x45',
-                 '[F-6b]': '\x0f\x6b\x45', 
+                 '[F-6b]': '\x0f\x6b\x45',
                  '[TXT11-71]': '\x15\x11\x71',
-                 '[TXT1a-71]': '\x15\x1a\x71',}
+                 '[TXT1a-71]': '\x15\x1a\x71',
+                 '[TXT1d-71]': '\x15\x1d\x71',
+                 '[TXT26-71]': '\x15\x26\x71',}
 
 def replace_f_control_codes(s):
      # use a regex to look for [F-16]
@@ -90,3 +100,19 @@ def replace_f_control_codes(s):
 
 
 STORY_MAX_WIDTH = 34
+VISUAL_MAX_WIDTH = 40
+
+# Order of text display in the game:
+# Intro cinematic
+# VISUAL.COM scene 1 (Rusty, villagers, mayor)
+# Level 1 (castle town)
+# STORY1.COM
+# Level 2 (graveyard/crypt)
+# STORY2.COM
+# GIRL2A.MAG (Disk B)
+
+# VISUAL.COM scene 2 (Gateau & Rusty)
+# Level 3 (Chapel)
+# STORY3.COM
+# Level 4
+# ...
