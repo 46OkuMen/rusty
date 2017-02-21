@@ -1,5 +1,5 @@
 JO.EXE HALFWIDTH TEXT HACK:
-change the value at 0x20193 from 04 to 02 (19fb:61e3?) 0x5b97
+change the value at 0x20193 from 04 to 02 (19fb:61e3?) 0x5b97 0x5f96???
 If I change this 46 (19fb:61b4), or 5f68 in JO.EXE, to a 90 (nop), it'll read every letter at least.
 
 How I arrived at that conclusion:

@@ -28,11 +28,11 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                'JO.EXE':     [(0xba5, 0xc01),
                               (0x6c23, 0x6cb8),
                               (0x6cd3, 0x6cee), # main menu, options
-               	          (0x6d5a, 0x6d83),
+               	              (0x6d5a, 0x6d83),
                               (0x6d99, 0x6db5),
-               	          (0x6e96, 0x6ebe),
+               	              (0x6e96, 0x6ebe),
                               (0x6ed4, 0x6ef0),
-               	          (0x6f7e, 0x6fa9),
+               	              (0x6f7e, 0x6fa9),
                               (0x6fb3, 0x6fc7),
                               (0x6fea, 0x7022),
                               (0x7aa5, 0x7ab4),],
@@ -63,6 +63,7 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                }
 
 CONTROL_CODES = {'[LN]': '\x04\x00\x73',
+                 '[START]': '\x04\x00\x69',
                  '[SCRL]': '\x05\x1e\x0d',
                  '[PAUSE]': '\x05\x1e',
                  '[0514]': '\x05\x14',
@@ -78,6 +79,7 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[01f017]': '\x01\xf0\x17',
                  '[017b19]': '\x01\x7b\x19',
                  '[019019]': '\x01\x90\x19',
+                 '[5f4501]': '\x04\xf4\x01',
                  '[1-1d]': '\x01\x1d\x05',
                  '[1-2c]': '\x01\x2c\x05',
                  '[1-77]': '\x01\x77\x05',
@@ -92,6 +94,7 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[TXT11-71]': '\x15\x11\x71',
                  '[TXT1a-71]': '\x15\x1a\x71',
                  '[TXT1d-71]': '\x15\x1d\x71',
+                 '[TXT1e-71]': '\x15\x1e\x71',
                  '[TXT26-71]': '\x15\x26\x71',}
 
 def replace_f_control_codes(s):

@@ -1,9 +1,30 @@
+GRPEGC.COM
+48d9 20 -> 1a: font table column shift
+4ad7: 1f -> 00; font table row shift
+
+(Original text for these two: 04 2c 5e eb 02 fe cc 2c 1f 80 ec 20)
+
 JO.EXE
-48d9 20 -> 1d
+8c4 04 -> 02: halfwidth cursor
+aae 8a e0 ac  -> b4 82 90: read every char
+
+Still needed:
+	Read every char
+	Real halfwidth hack
 
 "Gemu Sotato" = 83 51 etc
 
 8351
+
+Second-byte loading:
+mov ah, al
+lodsb
+
+Proposed replacement:
+mov ah, 82
+nop
+
+Yep! It works.
 
 At 8790:4857, it does "out a1, al"
 
@@ -30,3 +51,5 @@ call 48ae
 			dec ah
 			48d7 sub al, 1f
 			48d9 sub ah, 20
+
+
