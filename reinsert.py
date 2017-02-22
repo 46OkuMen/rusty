@@ -8,10 +8,10 @@ DestDisk = Disk(DEST_DISK_PATH)
 DumpXl = DumpExcel('rusty_dump.xlsx')
 PtrXl = PointerExcel('rusty_pointer_dump.xlsx')
 
-#files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
-#                     'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
-#                     'ENEMY9.COM', 'ENEMY10.COM' ]
-files_to_reinsert = ['VISUAL.COM']
+files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
+                     'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
+                     'ENEMY9.COM', 'ENEMY10.COM' ]
+#files_to_reinsert = ['VISUAL.COM']
 
 for filename in files_to_reinsert:
     scene_texts = []
@@ -30,11 +30,9 @@ for filename in files_to_reinsert:
         GF.edit(0x4048, '\x2e\x82') # period pause handling
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
 
-        diff = 0
-
         for i, p in enumerate(pointers.itervalues()):
             #if p[0].text_location < 0x1462 or p[0].text_location > 0x1800: # scene 2 only
-            if p[0].text_location > 0x1800: # first two scenes only
+            if p[0].text_location >= 0x1ae4: # scenes 1-4
                 continue
 
             print "considering translations from pointer", p
@@ -65,12 +63,14 @@ for filename in files_to_reinsert:
                 for loc in next_p:
                     if loc.location > loc.text_location:
                         # Update the pointer location with the new diff.
-                        cc = '[01' + "{0:x}".format(loc.text_location & 0xff) + "{0:x}".format((loc.text_location & 0xff00) >> 8) +  ']'
+                        cc = '[01' + "{0:02x}".format(loc.text_location & 0xff) + "{0:2x}".format((loc.text_location & 0xff00) >> 8) +  ']'
                         print "moving %s with diff %s" % (loc, diff)
                         loc.move_pointer_location(diff)
                     
+                        # Some of these are embedded in the text, so they have a certain control code in the sheet.
                         # Reassign that control code to point somewhere else.
                         cc_bytes = '\x01' + chr((loc.text_location+diff) & 0xff) + chr(((loc.text_location+diff) & 0xff00) >> 8)
+                        print "reassigning %s to %s" % (cc, repr(cc_bytes))
                         CONTROL_CODES[cc] = cc_bytes
 
                     print "editing %s with diff %s" % (loc, diff)
@@ -144,8 +144,8 @@ for filename in files_to_reinsert:
         for i, p in enumerate(pointers.itervalues()):
             start = p[0].text_location
             try:
-                next_p = indexed_pointers[i+1]
-                stop = indexed_pointers[i+1].text_location
+                next_p = indexed_pointers[i+1][0]
+                stop = indexed_pointers[i+1][0].text_location
             except IndexError:
                 next_p = None
                 stop = GF.length

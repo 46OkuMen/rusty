@@ -63,6 +63,7 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                }
 
 CONTROL_CODES = {'[LN]': '\x04\x00\x73',
+                 '[SLN]:' '\x0d',
                  '[START]': '\x04\x00\x69',
                  '[SCRL]': '\x05\x1e\x0d',
                  '[PAUSE]': '\x05\x1e',
@@ -79,6 +80,8 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[01f017]': '\x01\xf0\x17',
                  '[017b19]': '\x01\x7b\x19',
                  '[019019]': '\x01\x90\x19',
+                 '[01d119]': '\x01\xd1\x19',
+                 '[01081a]': '\x01\x08\x1a',
                  '[5f4501]': '\x04\xf4\x01',
                  '[1-1d]': '\x01\x1d\x05',
                  '[1-2c]': '\x01\x2c\x05',
@@ -102,6 +105,7 @@ def replace_f_control_codes(s):
      pass
 
 
+SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34
 VISUAL_MAX_WIDTH = 40
 
@@ -117,5 +121,12 @@ VISUAL_MAX_WIDTH = 40
 # VISUAL.COM scene 2 (Gateau & Rusty)
 # Level 3 (Chapel)
 # STORY3.COM
-# Level 4
+# Level 4 (Chapel tower)
+# STORY4.COM
+# ENEMY4.COM
+# STORY4.COM ("Khh... the floor!!")
+# VISUAL.COM scene 3 (Floor falls, then cave)
+# Level 5 (Cavern)
+# STORY5.COM
+# GIRL5A.MAG (Halfway done)
 # ...

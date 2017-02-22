@@ -211,11 +211,8 @@ def compress(filename):
                         value = (stored << 4) + 0x0
                         f.write(chr(value))
                         stored = None
+        print "Wrote file to %s" % 'R_A11.MGX'
 
 
-
-compress('white_square.bmp')
-
-
-
-#decompress('R_A11.MGX')
+if __name__ == '__main__':
+    compress('white_square.bmp')
