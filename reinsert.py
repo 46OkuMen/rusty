@@ -34,7 +34,7 @@ for filename in files_to_reinsert:
 
         for i, p in enumerate(pointers.itervalues()):
             #if p[0].text_location < 0x1462 or p[0].text_location > 0x1800: # scene 2 only
-            if p[0].text_location >= 0x1800: # first two scenes only
+            if p[0].text_location > 0x1800: # first two scenes only
                 continue
 
             print "considering translations from pointer", p
@@ -76,8 +76,27 @@ for filename in files_to_reinsert:
                     print "editing %s with diff %s" % (loc, diff)
                     loc.edit(diff)
 
-        #blank_length = 0x1420-0x632
-        #GF.filestring = GF.filestring[:0x632] + '\x00'*blank_length + GF.filestring[0x1420:] # blank scene 1
+        # So uh, how about that 151e71 control code?? Does it need moving?
+            # Try translating it without Gateau's first line. That'll keep the one line in place.
+            # If it's a pointer to 151e...
+
+        # 1420: fine, since it's before 142a and 1439
+
+        # 1430: oddly quick blinking animation?
+        # 1430:
+        # 1432: same as 1433
+        # 1433: same as 1434, maybe longer second frame
+        # 1434: no crash, but incomplete blink animation at ends of lines (open, slightly closed for a while, then back to open)
+        # 1435: no crash, but she gets derpy half closed eyes instead of the final blinking in each line
+
+        # 143b: "you monsters kidnapped!" crash (the 142a ani is blanked)
+        # 1450: "you monsters kidnapped!" crash, with weird stuttering blinking animations all throughout
+        # 1458: "you monsters kidnapped!" crash, derpy eyes the whole time, broken animation
+        # 1462: "save the gir" crash
+        #blank_until = 0x1458
+        #blank_length = blank_until-0x632
+        #GF.filestring = GF.filestring[:0x632] + '\x00'*blank_length + GF.filestring[blank_until:] # blank scene 1
+
         GF.filestring = GF.filestring[:0x2330-diff] + GF.filestring[0x2330:] # blank part of the file
 
         # So, that scene 2 crash. Doesn't have to do with the translations, control codes, or the ASM hacks.
@@ -89,7 +108,11 @@ for filename in files_to_reinsert:
         # Some of the similar control codes in the previous section are like 01 20 06, 01 2d 06, etc.
         # Probably pointing to something toward the beginning of each scene. (0x620, 0x62d, 0x1439, 0x142a, etc)
         # 0x142a = 04 00 05 0a 00 02 01 03 00 05 04 46 ff 2e 14
-        # 0x1439 = 04 00 05 0a 02 05 03 0f 02 06 05 0f 02 04 03
+        # 0x1439 = 04 00 05 0a 02 05 03 0f 02 06 05 0f 02 04 03 0a 02 02 00 01 02 02 01 01 05 0a 00 02 02 02 04 01 03 01a 02 03 05 0f ff 3d 14
+
+        # Hey, that 14 2e - does it suggest some kind of loop to earlier in that list of bytes?
+            # If it did, it points to the the location 4 bytes after the beginning! (first 4 bytes = header? x/y coords?)
+
 
         # vs2_00.mag = background
         # vs2_01.mag = Gateau
@@ -110,6 +133,8 @@ for filename in files_to_reinsert:
         # Is it worth just trying to get the length of the blocks down??
         # Scene 1 is ~2500 characters, and needs to be 193 shorter
         # Can I get rid of any control codes with no repercussions?
+
+        # 05 28 is probably a "repeat last animation" control code.
 
         assert len(GF.filestring) == len(GF.original_filestring), hex(len(GF.filestring)) + " " + hex(len(GF.original_filestring))
 
