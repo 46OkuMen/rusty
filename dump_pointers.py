@@ -94,9 +94,11 @@ for gamefile in sorted(FILE_BLOCKS):
             if int(text_location, 16) < SCENE_2_HEADER or int(text_location, 16) > ENDING_STOP:
                 continue
             else:
-                # If it's in the text blocks themselves, and not the headers, skip it.
-                if any([int(text_location, 16) >= scene[0] and int(text_location, 16) <= scene[1] for scene in SCENES_AFTER_1]):
-                    continue
+                ## If it's in the text blocks themselves, and not the headers, skip it.
+                #if any([int(text_location, 16) >= scene[0] and int(text_location, 16) <= scene[1] for scene in SCENES_AFTER_1]):
+                #    continue
+                # That ignores pointers that are right before the text block, which is a problem in scene 3.
+                pass
 
             pointer_location = '0x%05x' % pointer_location
 

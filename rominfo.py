@@ -63,7 +63,7 @@ FILE_BLOCKS = {'VISUAL.COM': [(0x6d9, 0x140f),  # vs1
                }
 
 CONTROL_CODES = {'[LN]': '\x04\x00\x73',
-                 '[SLN]:' '\x0d',
+                 '[SLN]': '\x0d',
                  '[START]': '\x04\x00\x69',
                  '[SCRL]': '\x05\x1e\x0d',
                  '[PAUSE]': '\x05\x1e',
@@ -80,7 +80,9 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[01f017]': '\x01\xf0\x17',
                  '[017b19]': '\x01\x7b\x19',
                  '[019019]': '\x01\x90\x19',
+                 '[01bc19]': '\x01\xbc\x19',
                  '[01d119]': '\x01\xd1\x19',
+                 '[01f319]': '\x01\xf3\x19',
                  '[01081a]': '\x01\x08\x1a',
                  '[5f4501]': '\x04\xf4\x01',
                  '[1-1d]': '\x01\x1d\x05',
@@ -98,12 +100,61 @@ CONTROL_CODES = {'[LN]': '\x04\x00\x73',
                  '[TXT1a-71]': '\x15\x1a\x71',
                  '[TXT1d-71]': '\x15\x1d\x71',
                  '[TXT1e-71]': '\x15\x1e\x71',
-                 '[TXT26-71]': '\x15\x26\x71',}
+                 '[TXT26-71]': '\x15\x26\x71',
+                 '[TXT28-54]': '\x15\x28\x54',
+                 '[TXT29-38]': '\x15\x29\x38',
+                 '[TXT2a-71]': '\x15\x2a\x71',
+                 '[TXT2f-54]': '\x15\x2f\x54',
+                 }
 
-def replace_f_control_codes(s):
-     # use a regex to look for [F-16]
-     pass
 
+# Scene 4 crash
+# Check the control code counts.
+# 017b19 (6 in JP, only 4 of 013a1a in EN) One thing remains 017b19, right after "Let's go eat."
+# 7d 19
+# 019019
+# 9f 19
+# a1 19
+# 01bc19
+# be 19
+# 01d119
+# d6 19
+# d8 19
+# 01f319
+# f5 19
+# 01081a
+# 1a0d
+
+# Check the animation loops, something is accidentally going to the Mayor's blinking animation and crashing stuff.
+# 01901a -> 1a90, loops to 1a97
+
+# Mina animations
+# 01b21a -> 1ab2, loops to 1ab4.
+# 01c71a -> 1ac7, loops to 1a08!? that seems bad.
+  # Original ctrl code: 01081a. That one loops to 1a08. So it never got changed...
+  # Location of the pointer is 1a0b.
+
+# 015e1a -> 1a5e, loops to 1a60.
+  # Before "She's beating up the bad guys"
+# 01951a -> 1a95, loops to 1a97.
+  # Also before "She's beating up the bad guys"
+
+# Nett animations
+# 017b1a -> 1a7b, loops to 1a7d.
+  # Before "She's beating up the bad guys"
+
+# Santos' animations
+# 014f1a -> 1a4f, loops to 1a4f. (5 in patched)
+  # Original: 019019 (6 in original)
+    # 1. Before "It's that young traveler"
+    # 2. Before "I wonder what she's up to?"
+    # 3. Before "She did at that"
+    # 4. Before "She looked very strong"
+    # 5. (missing in patched) Before "Now then, Nett, Mina."
+# 013a1a -> 1a3a, loops to 1a3c. (5 in patched)
+  # Original: 017b19 (6 in original)
+
+# What's up with this thing at 1a90? It seems to loop back to 19d1, which won't do...
 
 SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34
@@ -111,7 +162,8 @@ VISUAL_MAX_WIDTH = 40
 
 # Order of text display in the game:
 # Intro cinematic
-# VISUAL.COM scene 1 (Rusty, villagers, mayor)
+# JO.EXE (main menu)
+# VISUAL.COM scene 1 (Rusty, villagers, Santos, kids)
 # Level 1 (castle town)
 # STORY1.COM
 # Level 2 (graveyard/crypt)
@@ -124,9 +176,13 @@ VISUAL_MAX_WIDTH = 40
 # Level 4 (Chapel tower)
 # STORY4.COM
 # ENEMY4.COM
-# STORY4.COM ("Khh... the floor!!")
+# STORY4.COM again ("Khh... the floor!!")
 # VISUAL.COM scene 3 (Floor falls, then cave)
 # Level 5 (Cavern)
 # STORY5.COM
 # GIRL5A.MAG (Halfway done)
+
+# Level 6 (Hydrocity Zone)
+# STORY6.COM
+# VISUAL.COM scene 4 (Santos, kids in inn)
 # ...
