@@ -31,8 +31,10 @@ for filename in files_to_reinsert:
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
 
         for i, p in enumerate(pointers.itervalues()):
-            #if p[0].text_location < 0x1462 or p[0].text_location > 0x1800: # scene 2 only
-            if p[0].text_location >= 0x1ae4: # scenes 1-4
+            #if p[0].text_location < 0x1e00 or p[0].text_location >= 0x22AD: # scene 5
+            #if p[0].text_location >= 0x2230: or p[0] # scenes 1-5
+            #    continue
+            if any([pt.text_location >= 0x21ff for pt in p]):
                 continue
 
             print "considering translations from pointer", p
@@ -60,6 +62,9 @@ for filename in files_to_reinsert:
                 GF.filestring = GF.filestring.replace(t.japanese, t.english, 1)
 
             if next_p:
+                if next_p[0].text_location >= 0x21ff:
+                    print "it's 21ff, so skipping this"
+                    continue
                 for loc in next_p:
                     if loc.location > loc.text_location:
                         # Update the pointer location with the new diff.
@@ -97,7 +102,7 @@ for filename in files_to_reinsert:
         #blank_length = blank_until-0x632
         #GF.filestring = GF.filestring[:0x632] + '\x00'*blank_length + GF.filestring[blank_until:] # blank scene 1
 
-        GF.filestring = GF.filestring[:0x2330-diff] + GF.filestring[0x2330:] # blank part of the file
+        GF.filestring = GF.filestring[:0x2ff4-diff] + GF.filestring[0x2ff4:] # blank part of the file
 
         # So, that scene 2 crash. Doesn't have to do with the translations, control codes, or the ASM hacks.
         # But it does have to do with large blank spaces in the ROM...?

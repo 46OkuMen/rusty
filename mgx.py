@@ -3,7 +3,10 @@
 # But only the opening MGX files are Japanese, so the focus is on them.
 
 from PIL import Image
+from bitstring import BitString
 from lzss import little_endianize, write_little_endian
+from romtools.disk import Disk
+from rominfo import DEST_DISK_PATH
 
 bits = [0b10000000,
         0b01000000,
@@ -147,8 +150,8 @@ def decompress(filename):
                 # repeat until one of the buffers runs out
 
 
-def compress(filename):
-    im = Image.open(filename)
+def compress(src, dest):
+    im = Image.open(src)
     print im.size
 
     palette = [b'\x00\x00\x00', b'\x00\x00\x77', b'\x00\x77\x00', b'\x00\x77\x77',
@@ -159,21 +162,39 @@ def compress(filename):
 
     BW_palette = [b'\x00\x00\x00']
     BW_palette.extend([b'\xFF\xFF\xFF']*15)
-    print BW_palette
 
-    with open('R_A11.MGX', 'wb') as f:
+    with open(dest, 'wb') as f:
         x0 = 19
         y0 = 128
         x1 = 628
-        y1 = 271
+        y1 = 300
+
+
+        #flag_a_location = 0x50
+        #flag_b_location = 0x7ba
+        #color_index_stream_location = 0x10b5
+
+        #flag_a_size = 0x76a
+        flag_a_size = 0x100
+        flag_b_size = 0x1500
 
         flag_a_location = 0x50
-        flag_b_location = 0x7ba
-        color_index_stream_location = 0x10b5
+        flag_b_location = flag_a_size + flag_a_location
+        color_index_stream_location = flag_b_location + flag_b_size
 
-        flag_a_size = flag_b_location - flag_a_location
-        flag_b_size = color_index_stream_location - flag_b_location
+        # TODO: Need to set these flags according to the size of the image, duh.
+        # Too long, and garbage gets added to the end of the image. To short, and the image is truncated.
+        # Probably need to write the output to a buffer first, then determine the size of those things.
+
+        # Flag A should be the output / 8.
+        # Flag B can be 0, for all I know.
+
+        #flag_a_size = flag_b_location - flag_a_location
+        #flag_b_size = color_index_stream_location - flag_b_location
         color_index_stream_size = 20000
+
+        print hex(flag_a_size)
+        print hex(flag_b_size)
 
         f.write(b'MAKI02A ') # magic word
         f.write(b'\x1a\x00\x00\x00\x00') # beginning of header, screen modes
@@ -187,32 +208,58 @@ def compress(filename):
         write_little_endian(f, color_index_stream_location, 4)
         write_little_endian(f, color_index_stream_size, 4)
         f.write(''.join([p for p in BW_palette]))
+        #f.write(''.join([p for p in palette]))
         f.write('\x00'*flag_a_size)
         f.write('\x00'*flag_b_size)
 
         image = im.load()
         print im.size
         for row in range(0, im.size[1]):
-            stored = None
-            # 16-color image, so each pixel is 4 bits...?
-            # I seem to be struggling to get a resolution better than 4 pixels wide.
-            for col in range(0, im.size[0]):
-                if image[col, row]:
-                    if col % 2 == 0:
-                        stored = 0xf
-                    else:
-                        value = (stored << 4) + 0xf
-                        f.write(chr(value))
-                        stored = None
-                else:
-                    if col % 2 == 0:
-                        stored = 0x0
-                    else:
-                        value = (stored << 4) + 0x0
-                        f.write(chr(value))
-                        stored = None
-        print "Wrote file to %s" % 'R_A11.MGX'
+            for col in range(0, im.size[0], 8):
+                bool_array = [image[col+p, row] > 0 for p in range(0, 8)]
+                #print bool_array
+                bitstring = BitString(bool_array)
+                top = bitstring[:4]
+                bot = bitstring[4:]
+
+
+                #print bs
+                f.write(chr(int(top.hex, 16)))
+                f.write(chr(0x00))
+                f.write(chr(int(bot.hex, 16)))
+                f.write(chr(0x00))
+
+        #    if row % 2 == 0:
+        #        for col in range(0, im.size[0], 4):
+        #            f.write(chr(0xaa))
+        #            f.write(chr(0x00))
+        #    else:
+        #        for col in range(0, im.size[0], 4):
+        #            f.write(chr(0x55))
+        #            f.write(chr(0x00))
+
+        #    # 16-color image, so each pixel is 4 bits...?
+        #    # I seem to be struggling to get a resolution better than 4 pixels wide.
+        #    for col in range(0, im.size[0], 2):
+        #        if image[col, row] and image[col+1, row]:
+        #            f.write(chr(0xfd))
+        #        elif image[col, row] and not image[col+1, row]:
+        #            f.write(chr(0xe0))
+        #        elif not image[col, row] and image[col+1, row]:
+        #            f.write(chr(0x16))
+        #        else:
+        #            f.write(chr(0x00))
+        print "Wrote file to %s" % dest
+
+# 01 00 02 00 etc:
+# 0000 0001 (black, blue)
+# 0010 0011 (black, blue) == 0x23
+# 0100 0101 (black, blue) == 0x45
+# That dark blue is #00 00 77, or the first color in the palette
+
 
 
 if __name__ == '__main__':
-    compress('white_square.bmp')
+    compress('test.bmp', 'R_A23.MGX')
+    RustyDisk = Disk(DEST_DISK_PATH)
+    RustyDisk.insert('R_A23.MGX', '/RUSTY')
