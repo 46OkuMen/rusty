@@ -23,19 +23,17 @@ for filename in files_to_reinsert:
     indexed_pointers = pointers.values()
     diff = 0
     if filename == 'VISUAL.COM':
-        GF.edit(0x3ac7, '\x1a')     # font table column subtraction
-        GF.edit(0x403c, '\x02')     # halfwidth cursor incrementing
-        GF.edit(0x4006, '\xb4\x82') # prepend 0x82 to characters
-        GF.edit(0x403e, '\x2c\x82') # comma pause handling
-        GF.edit(0x4048, '\x2e\x82') # period pause handling
-        GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
+        #GF.edit(0x3ac7, '\x1a')     # font table column subtraction
+        #GF.edit(0x403c, '\x02')     # halfwidth cursor incrementing
+        #GF.edit(0x4006, '\xb4\x82') # prepend 0x82 to characters
+        #GF.edit(0x403e, '\x2c\x82') # comma pause handling
+        #GF.edit(0x4048, '\x2e\x82') # period pause handling
+        #GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
 
         for i, p in enumerate(pointers.itervalues()):
-            #if p[0].text_location < 0x1e00 or p[0].text_location >= 0x22AD: # scene 5
-            #if p[0].text_location >= 0x2230: or p[0] # scenes 1-5
+            #if any([pt.text_location >= 0x21ff for pt in p]): # first 5 scenes
+            #if any([pt.text_location >= 0x28b5 for pt in p]): # first 6 scenes
             #    continue
-            if any([pt.text_location >= 0x21ff for pt in p]):
-                continue
 
             print "considering translations from pointer", p
 
@@ -62,9 +60,9 @@ for filename in files_to_reinsert:
                 GF.filestring = GF.filestring.replace(t.japanese, t.english, 1)
 
             if next_p:
-                if next_p[0].text_location >= 0x21ff:
-                    print "it's 21ff, so skipping this"
-                    continue
+                #if next_p[0].text_location >= 0x21ff:
+                #    print "it's 21ff, so skipping this"
+                #    continue
                 for loc in next_p:
                     if loc.location > loc.text_location:
                         # Update the pointer location with the new diff.
@@ -155,6 +153,8 @@ for filename in files_to_reinsert:
                 next_p = None
                 stop = GF.length
             for t in [t for t in translations if start <= t.location < stop]:
+                t.english = t.english.replace('[SLN]', '\x0d')
+                t.japanese = t.japanese.replace('[SLN]', '\x0d')
                 diff += (len(t.english) - len(t.japanese))
                 j = GF.filestring.index(t.japanese)
                 GF.filestring = GF.filestring.replace(t.japanese, t.english, 1)

@@ -8,11 +8,11 @@ Romhacking utilities and notes developed as part of [46 OkuMen](http://46okumen.
 | ------------------------|-----:|:-----------:|
 | Opening Text Images     |  0%  |  (0 / 10)   |
 | Main Menu/System        | 38%  | (11 / 29)   |
-| CG Dialogue             | 50%  | (54 / 107)  |
-| Girl Rescue Dialogue    | 48%  | (82 / 170)  |
-| Boss Boasting Dialogue  | 30%  | (26 / 86)   |
+| CG Dialogue             | 67%  | (72 / 107)  |
+| Girl Rescue Dialogue    |100%  |(134 / 134)  |
+| Boss Boasting Dialogue  |100%  | (86 / 86)   |
 | Level Transition Images |100%  |  (3 / 3)    |
-| Total                   | 44%  |(176 / 403)  |
+| Total                   | 83%  |(306 / 369)  |
 
 
 ### How do I use this?

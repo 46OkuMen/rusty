@@ -1,0 +1,4 @@
+8312:4604 2e8a269d40 mov ah, cs:[409d]
+or ah, ah
+
+Try: put  b482909090 instead of that mov instruction. (mov ah, 82; nop nop nop etc)
