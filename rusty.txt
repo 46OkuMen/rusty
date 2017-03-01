@@ -1,3 +1,5 @@
+Initial notes for investigating the Rusty rom.
+
 FILE FORMATS
 .M, .M2 - music, for PMD
 .MAG - large image

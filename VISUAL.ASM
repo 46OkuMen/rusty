@@ -1,38 +1,45 @@
-VISUAL.COM REAL HALFWIDTH TEXT HACK:
-0x3ac7 20 -> 1b
-0x403c 04 -> 02
-0x3e39 2c 1a -> 2c 00
-And another thing to handle upper/lowercase text correctly
+; Hack to support halfwidth text in VISUAL.COM cut scenes.
+; I refer to "fake" and "real" halfwidth text hacks because originally,
+; I stored all the text as fullwidth latin characters, then translated them
+; into the equivalent halfwidth characters when being moved to the screen.
+; But I figured out how to get "real" halfwidth text for the final hack.
 
-2c 01, df (should be de)
+;VISUAL.COM REAL HALFWIDTH TEXT HACK:
+;0x3ac7 20 -> 1b
+;0x403c 04 -> 02
+;0x3e39 2c 1a -> 2c 00
+;And another thing to handle upper/lowercase text correctly
 
-HOW I GOT THERE:
-Getting the second byte of a two-byte sequence:
+;2c 01, df (should be de) ; wait, what does this mean again?
 
-mov ah, cs:[409d] (mov ah, 8312:[409d], which holds x82)
-^ 8312:409d is a spot where it keeps the first byte. The first-byte routine has a mov cs:[409d], al instruction.
-	(brackets mean the value at that address)_ASM.txt
+;HOW I GOT THERE:
+;Getting the second byte of a two-byte sequence:
 
-Checks to see if al is below 80, then jumps to 401e
+mov ah, cs:[409d] ;(mov ah, 8312:[409d], which holds x82)
+;^ 8312:409d is a spot where it keeps the first byte. The first-byte routine has a mov cs:[409d], al instruction.
+	;(brackets mean the value at that address)
 
-What's going on in the seciton where it moves ax to [di], [di+80], [di+180], [di+4], [di+84], [di+104], and [di+184]?
-	It's not VRAM. Just something that a lot of zeroes get written into...?
+;Checks to see if al is below 80, then jumps to 401e
 
-with both bytes (82bd, "ta") in register a:
-function at 8312:3e37
-cmp al, 61
-adc al, de # add with carry
-add ah, ah
-sub al, 1f
-EAX= 049e now
-add ax, 1fa1 (now 243f)
-and ax, 7f7f (still 243f)
-ret
-sub ax, 2000 (now 043f) <---!!
-out a1, al (wonder what this does??)
-mov ah, al (now 0404)
-(out a3, al??)
+;What's going on in the seciton where it moves ax to [di], [di+80], [di+180], [di+4], [di+84], [di+104], and [di+184]?
+	;It's not VRAM. Just something that a lot of zeroes get written into...?
 
+;with both bytes (82bd, "ta") in register a:
+FUNCTION_8312:3e37
+	cmp al, 61
+	adc al, de  ;add with carry
+	add ah, ah
+	sub al, 1f
+	;EAX= 049e now
+	add ax, 1fa1 ;(now 243f)
+	and ax, 7f7f ;(still 243f)
+	ret
+	sub ax, 2000 ;(now 043f) <---!!
+	out a1, al ;(wonder what this does??)  <- system call to FONT.ROM
+	mov ah, al ;(now 0404)
+	out a3, al
+
+/*
 So, do these numbers have anything to do with the coordinates on the font chart?
 font.bmp is 2048 * 2048, with 16x16 characters. So, (0x80)x(0x80) characters. (assuming all are fullwidth)
 	Kind of like the 7f7f thing, right?
@@ -89,6 +96,8 @@ What happens when it processes ascii text?
 					Change that whole instruction to 04 01, not b4 00.
 			3e3d: 3c61 cmp al 61
 			3e3f 14de adc al, de (if it's )
+
+*/
 
 IMPORTANT FUNCTIONS/LOCATIONS:
 40b1 lodsb (loads a byte to consider)
@@ -147,26 +156,26 @@ Different approach: What are the pointers for VISUAL.COM?
 	And the file that shows up before it, GRPEGC.COM, appears to have 5a30 allocated to it too.
 		These two files begin at seg 8790.
 
-69 and 73 refer to places * 0x1000 in VRAM. Hence the control codes.
+;69 and 73 refer to places * 0x1000 in VRAM. Hence the control codes.
 
-UPPERCASE/LOWERCASE THING
+;UPPERCASE/LOWERCASE THING
 
-Need to add de to lowercase letters (al >= 61), but df to uppercase letters (else).
-old versions:
+;Need to add de to lowercase letters (al >= 61), but df to uppercase letters (else).
+;old versions:
 	3e39 2c00 sub al, 00
 	3e3b 7804 js 3e41
 	3e3d 3c61 cmp al, 61
 	3e3f 14de adc al, de
 
-	If I overwrite 4 instructions, that's space for 8 bytes
+;	If I overwrite 4 instructions, that's space for 8 bytes
 	3e39 3c61 cmp al, 61
-	3e3b 7202 jb   3e3f             ----->
-	3e3d 0401 add al, 0                        |
-	3e3f 04de add al, de                    <---
+	3e3b 7202 jb   3e3f   ;               ----->
+	3e3d 0401 add al, 0   ;                     |
+	3e3f 04de add al, de  ;                  <---
 
-3c617202040104de
-3c617202040004df <- works!
+;3c617202040104de
+;3c617202040004df <- works!
 
-Uh, turns out I really just need to add de to any character. So mostly I can just nop these things.
+;Uh, turns out I really just need to add de to any character. So mostly I can just nop these things.
 
-04df909090909090
+;04df909090909090

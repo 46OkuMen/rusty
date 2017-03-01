@@ -1,13 +1,15 @@
-This all begins at segment 8312
-Breakpoint set at reading the first byte of "no", 82 cc, the second character in the first row, at 837fb
+; Very first trace of some ASM before I understood what was going on.
 
-40b3: 
+;This all begins at segment 8312
+;Breakpoint set at reading the first byte of "no", 82 cc, the second character in the first row, at 837fb
 
-40b3 ac lodsb            (reads the first byte)
+;40b3: 
+
+40b3 ac lodsb            ;(reads the first byte)
 40b4 0ac0 or al, al
 40b6 7503 jnz 40bb
 ->
-	40bb 3c20 cmp al, 20      (checks if it's a control code?)
+	40bb 3c20 cmp al, 20      ;(checks if it's a control code?)
 	40bd 7203 jb 40c2
 	40bf e9bb02 jmp 437d
 	->
@@ -16,10 +18,10 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 			3ffe 50 push ax
 			3fff 51 push cx
 			4000 56 push si
-			4001 2e8a269d40 mov ah, cs:[409d]    (05 00 06 00)?
+			4001 2e8a269d40 mov ah, cs:[409d]    ;(05 00 06 00)?
 			4006 0ae4 or ah, ah
 			4008 7524 jnz 402e
-			400a 3c80 cmp al, 80          (below 80, it calls 401e, also used for halfwidth kana-ignoring)
+			400a 3c80 cmp al, 80          ;(below 80, it calls 401e, also used for halfwidth kana-ignoring)
 			400c 7210 jb 401e
 			400e eca0 cmp al, a0
 			4010 7204 jb 4016
@@ -28,7 +30,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 				401a 33c9 xor cx, cx
 				401c eb6c jmp 408a
 				->
-					408a e30d jcxz 4099 (jump if ECX register is zero)
+					408a e30d jcxz 4099 ;(jump if ECX register is zero)
 					->
 						4099 5e pop si
 						409a 59 pop cx
@@ -38,7 +40,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 					4380 e83dee call 31c0
 					->
 						31c0 60 pusha
-						31c1 2e803eda3100 cmp cs:[31da], 00  (it's 01)
+						31c1 2e803eda3100 cmp cs:[31da], 00  ;(it's 01)
 						31c7 7503 jnz 31cc
 						->
 							31cc b83c00 mov ax, 003c
@@ -73,8 +75,8 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 										1bef b10a mov cl, 0a
 										1bf1 e8f600 call 1cea
 										->
-											(some moves that set EAX to 0408)
-											18b8:1cee cd18 int 18 (interrupt KEY PRESSED??)
+											;(some moves that set EAX to 0408)
+											18b8:1cee cd18 int 18 ;(interrupt KEY PRESSED??)
 											->
 												sti, lc, nop, iret
 												<-
@@ -86,7 +88,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 												->
 													1d00 b404 mov ah, 04
 													1d02 b009 mov al, 09
-													1d04 cd18 int 18 (interrupt KEY PRESSED?) -> sti, lc, nop, iret <-
+													1d04 cd18 int 18 ;(interrupt KEY PRESSED?) -> sti, lc, nop, iret <-
 													1d08 f6c408 test ah, 08
 													1d09 7403 jz 1d0e
 													->
@@ -95,7 +97,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 														->
 															1d16 b404 mov ah, 04
 															1d18 b005 mov al, 05
-															1d1a cd18 int 18 (interrupt KEY PRESSED?) -> sti, lc, nop, iret <-
+															1d1a cd18 int 18 ;(interrupt KEY PRESSED?) -> sti, lc, nop, iret <-
 															1d1c f6c402 test ah, 02
 															1d1f 7403 jz 1d24
 															->
@@ -105,7 +107,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 																	1d2c b404 mov ah, 04
 																	b00a mov al, 0a
 
-																(etc. lots of tests for keyboard input)
+																;(etc. lots of tests for keyboard input)
 								0025 c3 ret
 								<-
 							31d2 8e230 and dx, +30
@@ -126,7 +128,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 					40b4 0ac0 or al, al
 					40b6 7503 jnz 40bb
 					->
-						(40bb is listed above. Compares it to 20, etc)
+						;(40bb is listed above. Compares it to 20, etc)
 						eventually,
 						4006 0ae4 or ah, ah
 						4008 7524 jnz 402e
@@ -144,18 +146,18 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 								3ab5 50 push ax
 								3ab6 b00b mov al, 0b
 								3ab8 e68 out 68
-								3aba 58 pop ax     (loads 82cc, the char, back into ax)
+								3aba 58 pop ax     ;(loads 82cc, the char, back into ax)
 								3abb 0ae4 or ah, ah
 								3abd 7503 jnz 3ac2
 								->
 									3ac2 e87203  call 3e37
 									->
-										3e37 02e4 add ah, ah  (04cc)
-										3e39 2c1f sub al, 1f  (04ad)
-										3e3b 7804 js 3e41 (jump if sign flag, like if al became negative)
+										3e37 02e4 add ah, ah  ;(04cc)
+										3e39 2c1f sub al, 1f  ;(04ad)
+										3e3b 7804 js 3e41 ;(jump if sign flag, like if al became negative)
 										->
-											3e41 05a11f add ax, 1fa1    (244e)
-											3e44 257f7f and ax, 7f7f    (still 244e)
+											3e41 05a11f add ax, 1fa1    ;(244e)
+											3e44 257f7f and ax, 7f7f    ;(still 244e)
 											3e47 c3 ret
 											<-
 										<-
@@ -205,7 +207,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 									3b5f bf9e3c mov di, 3c9e
 									3b62 b90f00 mov cx, 000f
 
-									more stuff
+									;more stuff
 
 											mov si, 3c26 
 											mov ax, a800
@@ -214,19 +216,19 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 												move lots of bytes to the first plane of VRAM
 												mov es, ax
 												mov cx, bp
-												repe movsw (repeat movsw the number of times, usually 2)
-													(movsw moves word at [DS:SI] to [ES:DI])
-													(move 300c to somewhere in VRAM)
-											then move stuff to the other 3 planes of VRAM
+												repe movsw ;(repeat movsw the number of times, usually 2)
+													;(movsw moves word at [DS:SI] to [ES:DI])
+													;(move 300c to somewhere in VRAM)
+											;then move stuff to the other 3 planes of VRAM
 											<-
 										call 33c6
 										->
 											33c6 9c pushf
 											33c7 50 push ax
 											33c8 1e push ds
-											pushes and outs and stuff
-											...
-											then it calls the thing that writes to VRAM again
+											;pushes and outs and stuff
+											;...
+											;then it calls the thing that writes to VRAM again
 
 											403a 83c704 add di, +04
 											403d  3d4181 cmp ax, 8141
@@ -276,7 +278,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 																69b4 26803e922a00 cmp es:[2a92], 00
 																69ba 7416 jz 69d2
 
-															(How'd I get here?)
+															;(How'd I get here?)
 																fd80:022d push ds
 																022e xor ax, ax
 																8ed8 mov ds, ax
@@ -304,7 +306,7 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 																<-
 															18b8:69ad push ds
 															->
-																(how'd I get here again?)
+																;(how'd I get here again?)
 																fd80:022d (detailed above)
 															69ae push es
 															69af mov ax, 1f9f
@@ -312,54 +314,54 @@ Breakpoint set at reading the first byte of "no", 82 cc, the second character in
 															69b4 cmp es:[2a92], 00
 															69ba jz 69d2
 
-										The "display stuff" routine is somewhere in the 18b8 segment.
+										;The "display stuff" routine is somewhere in the 18b8 segment.
 										18b8:1650 50 push ax
 										1651 2eff066d16 inc word ptr cs:[166d]
 										1656 b022 mov al, 22
 										1658 e600 out 00, al
 										165a e664 out 64, al
 										165c 58 pop ax
-										165d fb sti      <- here it is??? The character is displayed after this instruction.
+										165d fb sti      ;<- here it is??? The character is displayed after this instruction.
 										165e cf iret
 
 
 
-			4012 3ce0 cmp al, e0      (branch between a0 and e0 = halfwidth kana??)
-			4014 7208 jb 401e         (now, what happens in 401e? put some halfwidth kana in and find out)
+			4012 3ce0 cmp al, e0      ;(branch between a0 and e0 = halfwidth kana??)
+			4014 7208 jb 401e         ;(now, what happens in 401e? put some halfwidth kana in and find out)
 			4016 2ea29d40 mov cs:[409d], al
 			401a 33c9 xor cx, cx
 			401c eb6c jmp 408a
 
 
 
-HALFWIDTH KANA a8:
+;HALFWIDTH KANA a8:
 
-starting at that jump to 401e:
+;starting at that jump to 401e:
 401e e888fa call 3aa9
 ->
-	3aa9 60 pusha  (this is detailed above already. Just the text routine without the 'load 2nd byte' bit)
+	3aa9 60 pusha  ;(this is detailed above already. Just the text routine without the 'load 2nd byte' bit)
 	3aaa 06 push es
 	3aab fc cld
 	3aac 8ccb mov bx, cs
-	...
-	...
+	;...
+	;...
 
-lots of moves (movsw) from DS:SI to ES:DI, or 62f6:2482 () to b800:2832 (3rd VRAM plane)
+;lots of moves (movsw) from DS:SI to ES:DI, or 62f6:2482 () to b800:2832 (3rd VRAM plane)
 
-loop with counter BX at 05: (row? Starts at like x18)
-	inner loop with counter CX at 02: (column? starts at like x7)
-		SI goes up: 24bc +1 each CX loop
-		DI (VRAM index) goes up: 27e0 +1 each CX loop
-	DI (VRAM index) goes up by DX: 282e
+;loop with counter BX at 05: (row? Starts at like x18)
+;	inner loop with counter CX at 02: (column? starts at like x7)
+;		SI goes up: 24bc +1 each CX loop
+;		DI (VRAM index) goes up: 27e0 +1 each CX loop
+;	DI (VRAM index) goes up by DX: 282e
 
 	
 
 
-Some questions:
-Which file is at x18b8? (it's JO.EXE)
-So, where is the font held in memory??
-	Loaded the FONT.ROM, skye_FONT.ROM, and Portuguese EVO font, checked diffs.
-	Looks like it may be from about 0x86d27 to 0x86f3b.
-	Can't get it to look like a font in yy-chr though... I wonder if that's really it
+;Some questions:
+;Which file is at x18b8? (it's JO.EXE)
+;So, where is the font held in memory??
+;	Loaded the FONT.ROM, skye_FONT.ROM, and Portuguese EVO font, checked diffs.
+;	Looks like it may be from about 0x86d27 to 0x86f3b.
+;	Can't get it to look like a font in yy-chr though... I wonder if that's really it
 
-What is at segment 62f6? Starts with 5a 00 a0 02 e6 04 2c 07 b2 0a 38 0e be 11 64 14.
+;What is at segment 62f6? Starts with 5a 00 a0 02 e6 04 2c 07 b2 0a 38 0e be 11 64 14.
