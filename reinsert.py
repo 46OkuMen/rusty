@@ -8,10 +8,10 @@ DestDisk = Disk(DEST_DISK_PATH)
 DumpXl = DumpExcel('rusty_dump.xlsx')
 PtrXl = PointerExcel('rusty_pointer_dump.xlsx')
 
-#files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
-#                     'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
-#                     'ENEMY9.COM', 'ENEMY10.COM' ]
-files_to_reinsert = ['VISUAL.COM']
+files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
+                     'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
+                     'ENEMY9.COM', 'ENEMY10.COM' ]
+#files_to_reinsert = ['VISUAL.COM']
 
 for filename in files_to_reinsert:
     scene_texts = []
@@ -64,32 +64,6 @@ for filename in files_to_reinsert:
                     GF.filestring = GF.filestring[:stable_location] + '\x00'*((-1)*diff) + GF.filestring[stable_location:]
                     diff = 0
 
-                #elif next_p[0].text_location == 0x1a0d:
-                #    stable_location = GF.filestring.index('\x10\x00\x5f\x76\x69\x73\x75\x61\x6c\x33\x2e')
-                #    print "Scene 4 is next, so padding it at", hex(stable_location)
-                #    GF.filestring = GF.filestring[:stable_location] + '\x00'*((-1)*diff) + GF.filestring[stable_location:]
-                #    diff = 0
-
-                #elif next_p[0].text_location == 0x1e30:
-                #    stable_location = GF.filestring.index('\x10\x00\x5f\x76\x69\x73\x75\x61\x6c\x35\x2e')
-                #    print "Scene 5 is next, so padding it at", hex(stable_location)
-                #    GF.filestring = GF.filestring[:stable_location] + '\x00'*((-1)*diff) + GF.filestring[stable_location:]
-                #    diff = 0
-
-
-                #elif next_p[0].text_location == 0x2230:
-                #    stable_location = GF.filestring.index('\x10\x00\x5f\x76\x69\x73\x75\x61\x6c\x34\x2e')
-                #    print "Scene 6 is next, so padding it at", hex(stable_location)
-                #    GF.filestring = GF.filestring[:stable_location] + '\x00'*((-1)*diff) + GF.filestring[stable_location:]
-                #    diff = 0
-
-                #elif next_p[0].text_location == 0x2892:
-                #    stable_location = GF.filestring.index('\x02\x0a\x00\x05\x01\x0a\x00\x07')
-                #    print "Ending is next, so padding it at", hex(stable_location)
-                #    GF.filestring = GF.filestring[:stable_location] + '\x00'*((-1)*diff) + GF.filestring[stable_location:]
-                #    diff = 0
-
-
                 for loc in next_p:
                     if loc.location > loc.text_location:
                         # Update the pointer location with the new diff.
@@ -113,7 +87,7 @@ for filename in files_to_reinsert:
         else:
             GF.filestring = GF.filestring[:code_block_location] + '\x0d'*((-1)*diff) + GF.filestring[code_block_location:]
 
-        SCENE_TO_TEST = 0     # 0-5 for scenes 1-6.
+        SCENE_TO_TEST = 5     # 0-5 for scenes 1-6.
         scene_diff = pointers[SCENE_POINTERS[SCENE_TO_TEST]][0].new_text_location - pointers[SCENE_POINTERS[0]][0].new_text_location
         pointers[SCENE_POINTERS[0]][0].edit(scene_diff)
         print pointers[SCENE_POINTERS[0]]
