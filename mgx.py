@@ -160,23 +160,30 @@ def compress(src, dest):
                b'\xff\x00\x00', b'\xff\x00\xff', b'\xff\xff\x00', b'\xff\xff\xff'
               ]
 
-    BW_palette = [b'\x00\x00\x00']
-    BW_palette.extend([b'\xFF\xFF\xFF']*15)
+    BW_palette = [b'\x00\x00\x00']*16
+    BW_palette[1] = b'\xFF\xFF\xFF'
+    print BW_palette
+    #BW_palette.extend([b'\xFF\xFF\xFF'])
+    #BW_palette.extend([b'\xFF\xFF\xFF']*15)
 
     with open(dest, 'wb') as f:
-        x0 = 19
-        y0 = 128
-        x1 = 628
-        y1 = 300
+        x0 = 24
+        y0 = 116
+        x1 = 616
+        y1 = 256
 
+        # Really important to get the width right, obviously!!
+        # R_A23: 98, 128, 628, 280 # (last originally 300)
+        # R_A31: 16, 116, 624, 276
+        # R_A36: 24, 116, 616, 266
 
         #flag_a_location = 0x50
         #flag_b_location = 0x7ba
         #color_index_stream_location = 0x10b5
 
         #flag_a_size = 0x76a
-        flag_a_size = 0x100
-        flag_b_size = 0x1500
+        flag_a_size = 0x300
+        flag_b_size = 0x3000
 
         flag_a_location = 0x50
         flag_b_location = flag_a_size + flag_a_location
@@ -191,7 +198,7 @@ def compress(src, dest):
 
         #flag_a_size = flag_b_location - flag_a_location
         #flag_b_size = color_index_stream_location - flag_b_location
-        color_index_stream_size = 20000
+        color_index_stream_size = 0xb000 # has no effect on anything...?
 
         print hex(flag_a_size)
         print hex(flag_b_size)
@@ -212,6 +219,8 @@ def compress(src, dest):
         f.write('\x00'*flag_a_size)
         f.write('\x00'*flag_b_size)
 
+        color_index_stream_actual_size = 0
+
         image = im.load()
         print im.size
         for row in range(0, im.size[1]):
@@ -228,28 +237,10 @@ def compress(src, dest):
                 f.write(chr(0x00))
                 f.write(chr(int(bot.hex, 16)))
                 f.write(chr(0x00))
+                color_index_stream_actual_size += 4
 
-        #    if row % 2 == 0:
-        #        for col in range(0, im.size[0], 4):
-        #            f.write(chr(0xaa))
-        #            f.write(chr(0x00))
-        #    else:
-        #        for col in range(0, im.size[0], 4):
-        #            f.write(chr(0x55))
-        #            f.write(chr(0x00))
-
-        #    # 16-color image, so each pixel is 4 bits...?
-        #    # I seem to be struggling to get a resolution better than 4 pixels wide.
-        #    for col in range(0, im.size[0], 2):
-        #        if image[col, row] and image[col+1, row]:
-        #            f.write(chr(0xfd))
-        #        elif image[col, row] and not image[col+1, row]:
-        #            f.write(chr(0xe0))
-        #        elif not image[col, row] and image[col+1, row]:
-        #            f.write(chr(0x16))
-        #        else:
-        #            f.write(chr(0x00))
         print "Wrote file to %s" % dest
+        print hex(color_index_stream_actual_size)
 
 # 01 00 02 00 etc:
 # 0000 0001 (black, blue)
@@ -260,6 +251,7 @@ def compress(src, dest):
 
 
 if __name__ == '__main__':
-    compress('test.bmp', 'R_A23.MGX')
+    target = 'R_A36'
+    compress(target + '.bmp', target + '.MGX')
     RustyDisk = Disk(DEST_DISK_PATH)
-    RustyDisk.insert('R_A23.MGX', '/RUSTY')
+    RustyDisk.insert(target + '.MGX', '/RUSTY')

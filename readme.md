@@ -6,13 +6,13 @@ Romhacking utilities and notes developed as part of [46 OkuMen](http://46okumen.
 ### Progress
 | Segment                 | %    | Strings     | 
 | ------------------------|-----:|:-----------:|
-| Opening Text Images     |  0%  |  (0 / 10)   |
+| Opening Text Images     | 30%  |  (3 / 10)   |
 | Main Menu/System        |100%  | (29 / 29)   |
 | CG Dialogue             |100%  |(107 / 107)  |
 | Girl Rescue Dialogue    |100%  |(134 / 134)  |
 | Boss Boasting Dialogue  |100%  | (86 / 86)   |
 | Level Transition Images |100%  |  (3 / 3)    |
-| Total                   | 97%  |(359 / 369)  |
+| Total                   | 98%  |(362 / 369)  |
 
 
 ### How do I use this?

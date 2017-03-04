@@ -6,6 +6,8 @@
 * See if the crumbling animation in scene 3 is working as in the JP version
 * Fix Mayor's final animation in scene 4
 * Ending scroll pointer is wrong? Cuts off the beginning of the string
+* Any way to increase the text speed?
+	* Play with music to see if there are any problems with the slower text.
 
 ## STORY/ENEMY.COM
 * Various formatting things
