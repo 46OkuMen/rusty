@@ -8,6 +8,7 @@
 * Ending scroll pointer is wrong? Cuts off the beginning of the string
 * Any way to increase the text speed?
 	* Play with music to see if there are any problems with the slower text.
+* Question marks play a blip sound, but periods/elipses do not?
 
 ## STORY/ENEMY.COM
 * Various formatting things

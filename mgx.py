@@ -167,10 +167,10 @@ def compress(src, dest):
     #BW_palette.extend([b'\xFF\xFF\xFF']*15)
 
     with open(dest, 'wb') as f:
-        x0 = 24
+        x0 = 0
         y0 = 116
-        x1 = 616
-        y1 = 256
+        x1 = 632
+        y1 = 272
 
         # Really important to get the width right, obviously!!
         # R_A23: 98, 128, 628, 280 # (last originally 300)
@@ -182,8 +182,8 @@ def compress(src, dest):
         #color_index_stream_location = 0x10b5
 
         #flag_a_size = 0x76a
-        flag_a_size = 0x300
-        flag_b_size = 0x3000
+        flag_a_size = 0x200
+        flag_b_size = 0x2870
 
         flag_a_location = 0x50
         flag_b_location = flag_a_size + flag_a_location
@@ -251,7 +251,7 @@ def compress(src, dest):
 
 
 if __name__ == '__main__':
-    target = 'R_A36'
+    target = 'R_A31'
     compress(target + '.bmp', target + '.MGX')
     RustyDisk = Disk(DEST_DISK_PATH)
     RustyDisk.insert(target + '.MGX', '/RUSTY')
