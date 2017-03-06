@@ -27,6 +27,7 @@ for filename in files_to_reinsert:
         GF.edit(0x403c, '\x02')     # halfwidth cursor incrementing
         GF.edit(0x4006, '\xb4\x82') # prepend 0x82 to characters
         GF.edit(0x403e, '\x2c\x82') # comma pause handling
+        GF.edit(0x4043, '\x3f\x82') # question mark pause/blip handling (new, experimental)
         GF.edit(0x4048, '\x2e\x82') # period pause handling
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
 
