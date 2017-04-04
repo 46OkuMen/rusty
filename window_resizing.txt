@@ -1,0 +1,20 @@
+origin: (18, 41) -> (0x12, 0x41)
+opposite: (624, 88) -> (0x270, 0x58)
+width is 25e, height is x17.
+
+The pointer to the first string is at 0x986.
+
+Four "window drawing pointers," with prefix d8 be.
+Look for a set of values that it alternates between for each set of windows.
+
+e8 79 fb b8 1f 00 e8 73 06 8c c8 8e d8 be 84 35 b9 02 00 bf 14 00 bb 12
+
+e8 49 fb 07 1b 61 60 1e 06 8c c8 8e d8 be aa 35 b9 02 00 bf 32 00 bb 12
+
+e8 29 fb 07 1f 61 60 1e 06 8c c8 8e d8 be f5 35 b9 02 00 bf 14 00 bb 12
+
+e8 09 fb 07 1f 61 60 1e 06 8c c8 8e d8 be 45 37 b9 02 00 bf 32 00 bb 12
+
+
+
+That 14 or 32 value is the vertical position of the window! So the 12 must be the horizontal.
