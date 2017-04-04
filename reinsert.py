@@ -88,10 +88,11 @@ for filename in files_to_reinsert:
         else:
             GF.filestring = GF.filestring[:code_block_location] + '\x0d'*((-1)*diff) + GF.filestring[code_block_location:]
 
-        SCENE_TO_TEST = 5     # 0-5 for scenes 1-6.
+        SCENE_TO_TEST = 1     # 0-5 for scenes 1-6.
         scene_diff = pointers[SCENE_POINTERS[SCENE_TO_TEST]][0].new_text_location - pointers[SCENE_POINTERS[0]][0].new_text_location
         pointers[SCENE_POINTERS[0]][0].edit(scene_diff)
-        print pointers[SCENE_POINTERS[0]]
+
+        SCENE_2_CORRUPTION_LOCATION = 0x167f
 
         assert len(GF.filestring) == len(GF.original_filestring), hex(len(GF.filestring)) + " " + hex(len(GF.original_filestring))
 
@@ -119,5 +120,3 @@ for filename in files_to_reinsert:
 
 
     GF.write(path_in_disk='\\RUSTY\\', compression=True)
-
-# TODO: Try padding each VISUAL.COM scene. Maybe no pointers will need edits!

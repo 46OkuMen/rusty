@@ -139,7 +139,6 @@ SCENE_POINTERS = [0x632, # scene 1
 
 
 
-
 # Scene 4 crash
 # Check the control code counts.
 # 017b19 (6 in JP, only 4 of 013a1a in EN) One thing remains 017b19, right after "Let's go eat."
