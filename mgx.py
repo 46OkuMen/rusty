@@ -162,20 +162,28 @@ def compress(src, dest):
 
     BW_palette = [b'\x00\x00\x00']*16
     BW_palette[1] = b'\xFF\xFF\xFF'
-    print BW_palette
     #BW_palette.extend([b'\xFF\xFF\xFF'])
     #BW_palette.extend([b'\xFF\xFF\xFF']*15)
 
     with open(dest, 'wb') as f:
-        x0 = 0
-        y0 = 116
-        x1 = 632
-        y1 = 272
+        x0 = 232
+        y0 = 158
+        x1 = 396
+        y1 = 230
+
+        # x1: x0 + width - 4.
 
         # Really important to get the width right, obviously!!
-        # R_A23: 98, 128, 628, 280 # (last originally 300)
-        # R_A31: 16, 116, 624, 276
-        # R_A36: 24, 116, 616, 266
+        # R_A23: 0, 120, 624, 264, flag_b = 0x2880
+        # R_A31: 16, 116, 624, 276, flag_b = 0x2880
+        # R_A36: 16, 116, 624, 258, flag_b = 0x2880
+        # STAFF1: 136, 168, 500, 210, flag_b = 0x2880
+        # STAFF2: 136, 130, 500, 258
+        # STAFF3: 136, 130, 500, 264
+        # STAFF4: 176, 130, 476, 248
+        # STAFF5: 136, 150, 516, 220
+        # STAFF6: 136, 168, 500, 207
+        # STAFF7:
 
         #flag_a_location = 0x50
         #flag_b_location = 0x7ba
@@ -183,7 +191,7 @@ def compress(src, dest):
 
         #flag_a_size = 0x76a
         flag_a_size = 0x200
-        flag_b_size = 0x2870
+        flag_b_size = 0x2880
 
         flag_a_location = 0x50
         flag_b_location = flag_a_size + flag_a_location
@@ -251,7 +259,7 @@ def compress(src, dest):
 
 
 if __name__ == '__main__':
-    target = 'R_A31'
+    target = 'STAFF7'
     compress(target + '.bmp', target + '.MGX')
     RustyDisk = Disk(DEST_DISK_PATH)
     RustyDisk.insert(target + '.MGX', '/RUSTY')
