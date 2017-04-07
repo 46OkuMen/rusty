@@ -1,5 +1,5 @@
 import os
-from rominfo import SRC_DISK_PATH, SRC_DISK_DIR, DEST_DISK_PATH, DEST_DISK_DIR, CONTROL_CODES, SCENE_POINTERS
+from rominfo import SRC_DISK_PATH, SRC_DISK_DIR, DEST_DISK_PATH, DEST_DISK_DIR, CONTROL_CODES, SCENE_POINTERS, WINDOW_EXPANSIONS
 from romtools.disk import Disk, Gamefile
 from romtools.dump import PointerExcel, DumpExcel, Translation
 
@@ -117,6 +117,10 @@ for filename in files_to_reinsert:
             if next_p:
                 print "editing %s with diff %s" % (next_p, diff)
                 next_p.edit(diff)
+        for (gamefile, offset, newvalue) in WINDOW_EXPANSIONS:
+            if gamefile == filename:
+                print "Adjusting window size:", gamefile, offset, newvalue
+                GF.filestring = GF.filestring[:offset] + chr(newvalue) + GF.filestring[offset+1:]
 
 
     GF.write(path_in_disk='\\RUSTY\\', compression=True)

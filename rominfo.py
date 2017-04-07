@@ -137,7 +137,15 @@ SCENE_POINTERS = [0x632, # scene 1
                   0x2230, # scene 6
                   ]
 
-
+WINDOW_EXPANSIONS = [
+                ('STORY6.COM', 0xac0, 0x5), # "You okay?"
+                ('STORY6.COM', 0xb40, 0x2), # "Yes?"
+                ('STORY9.COM', 0xa7a, 0xd), # "A voice boomed from above."
+                ('STORY9.COM', 0xafa, 0x3), # "Cur!!" (shrink)
+                ('STORY9.COM', 0xb3a, 0x3), # "Goal?" (shrink)
+                ('STORY10.COM', 0x707, 0x12), # "A grave voice booms from somewhere..." (maybe too long)
+                ('ENEMY10.COM', 0x37b3, 0x1), # "!?" (srhink)
+]
 
 # Scene 4 crash
 # Check the control code counts.
