@@ -143,7 +143,8 @@ WINDOW_EXPANSIONS = [
                 ('STORY9.COM', 0xa7a, 0xd), # "A voice boomed from above."
                 ('STORY9.COM', 0xafa, 0x3), # "Cur!!" (shrink)
                 ('STORY9.COM', 0xb3a, 0x3), # "Goal?" (shrink)
-                ('STORY10.COM', 0x707, 0x12), # "A grave voice booms from somewhere..." (maybe too long)
+                ('STORY10.COM', 0x701, 0x0), # "A grave voice booms from somewhere..." x0 position
+                ('STORY10.COM', 0x707, 0x13), # "A grave voice booms from somewhere..." x width
                 ('ENEMY10.COM', 0x37b3, 0x1), # "!?" (srhink)
 ]
 
