@@ -52,9 +52,9 @@ out 77, al
 = b0a0e677
 
 ; load ff into counter #2
-mov al, ff
+mov al, 50
 out 75, al
-= b0ffe675
+= b050e675
 
 ; loop to read counter #2
 in al, 75 ; change a0 to 71; read timer #0
@@ -95,3 +95,49 @@ call cs:[bp+00]
 ; Punctuation has the bp value 63d8, which calls cs:6ce3.
 
 ; After it does a letter specific thing, it calls the 3c version later...
+
+
+; Here's what I ended up doing. Just replace the long GDC-status-reading loop
+; with a simple time-wasting counter loop.
+; Time wasting loop:
+xor ax, ax
+inc eax
+cmp ax, c0ff
+jb 4549
+
+; 31c066403dffc072f99090909090909090909090
+
+
+Stuff at the end of the loop that needs to be there:
+pop ds
+popa
+popf
+ret
+
+; 1f619dc3
+
+; So, starting at 90ff:4545, insert this:
+
+; set the control word: counter #2, high byte only
+mov al, a0
+out 77, al
+= b0a0e677
+
+; load ff into counter #2
+mov al, 50
+out 75, al
+= b050e675
+
+; loop to read counter #2
+in al, 75 ; change a0 to 71; read timer #2
+cmp al, 00
+jz 4557
+
+
+= e4753c00ebf0eb00
+
+b0a0e677b050e675e4753c00ebf0
+
+
+; Testing this out:
+b0a0e677b050e675e4753c0074fa1f619dc390909090909090909090
