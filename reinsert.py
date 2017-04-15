@@ -8,6 +8,9 @@ DestDisk = Disk(DEST_DISK_PATH)
 DumpXl = DumpExcel('rusty_dump.xlsx')
 PtrXl = PointerExcel('rusty_pointer_dump.xlsx')
 
+VISUAL_TEXT_SPEED = '\x00\xc0'
+SCENE_TO_TEST = 0     # 0-5 for scenes 1-6.
+
 files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
                      'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
                      'ENEMY9.COM', 'ENEMY10.COM' ]
@@ -30,6 +33,8 @@ for filename in files_to_reinsert:
         GF.edit(0x4043, '\x3f\x82') # question mark pause/blip handling (new, experimental)
         GF.edit(0x4048, '\x2e\x82') # period pause handling
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
+        # See TIMING.ASM for this last one
+        #GF.edit(0x4547, '\x31\xc0\x66\x40\x3d' + VISUAL_TEXT_SPEED + '\x72\xf9\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90')
 
         for i, p in enumerate(pointers.itervalues()):
             print "considering translations from pointer", p
@@ -88,7 +93,6 @@ for filename in files_to_reinsert:
         else:
             GF.filestring = GF.filestring[:code_block_location] + '\x0d'*((-1)*diff) + GF.filestring[code_block_location:]
 
-        SCENE_TO_TEST = 0     # 0-5 for scenes 1-6.
         scene_diff = pointers[SCENE_POINTERS[SCENE_TO_TEST]][0].new_text_location - pointers[SCENE_POINTERS[0]][0].new_text_location
         pointers[SCENE_POINTERS[0]][0].edit(scene_diff)
 

@@ -18,3 +18,5 @@ e8 09 fb 07 1f 61 60 1e 06 8c c8 8e d8 be 45 37 b9 02 00 bf 32 00 bb 12
 
 
 That 14 or 32 value is the vertical position of the window! So the 12 must be the horizontal.
+
+Take the location of the first byte of the text pointer, add 9, that's the window width byte.

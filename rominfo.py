@@ -148,53 +148,6 @@ WINDOW_EXPANSIONS = [
                 ('ENEMY10.COM', 0x37b3, 0x1), # "!?" (srhink)
 ]
 
-# Scene 4 crash
-# Check the control code counts.
-# 017b19 (6 in JP, only 4 of 013a1a in EN) One thing remains 017b19, right after "Let's go eat."
-# 7d 19
-# 019019
-# 9f 19
-# a1 19
-# 01bc19
-# be 19
-# 01d119
-# d6 19
-# d8 19
-# 01f319
-# f5 19
-# 01081a
-# 1a0d
-
-# Check the animation loops, something is accidentally going to the Mayor's blinking animation and crashing stuff.
-# 01901a -> 1a90, loops to 1a97
-
-# Mina animations
-# 01b21a -> 1ab2, loops to 1ab4.
-# 01c71a -> 1ac7, loops to 1a08!? that seems bad.
-  # Original ctrl code: 01081a. That one loops to 1a08. So it never got changed...
-  # Location of the pointer is 1a0b.
-
-# 015e1a -> 1a5e, loops to 1a60.
-  # Before "She's beating up the bad guys"
-# 01951a -> 1a95, loops to 1a97.
-  # Also before "She's beating up the bad guys"
-
-# Nett animations
-# 017b1a -> 1a7b, loops to 1a7d.
-  # Before "She's beating up the bad guys"
-
-# Santos' animations
-# 014f1a -> 1a4f, loops to 1a4f. (5 in patched)
-  # Original: 019019 (6 in original)
-    # 1. Before "It's that young traveler"
-    # 2. Before "I wonder what she's up to?"
-    # 3. Before "She did at that"
-    # 4. Before "She looked very strong"
-    # 5. (missing in patched) Before "Now then, Nett, Mina."
-# 013a1a -> 1a3a, loops to 1a3c. (5 in patched)
-  # Original: 017b19 (6 in original)
-
-# What's up with this thing at 1a90? It seems to loop back to 19d1, which won't do...
 
 SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34
@@ -225,4 +178,16 @@ VISUAL_MAX_WIDTH = 40
 # Level 6 (Hydrocity Zone)
 # STORY6.COM
 # VISUAL.COM scene 4 (Santos, kids in inn)
+# Level 7 (Sunset parallax)
+# STORY7.COM
+# GIRL7A.MAG (Disk C)
+
+# VISUAL.COM scene 4 (Mary, Gateau, Ryoko)
+# Level 8 (Clock tower)
+# STORY8.COM
+# Level 9 (Giant castle)
+# STORY9.COM (Gateau)
+# Gateau fight
+# ENEMY9.COM (Gateau)
+# VISUAL.COM
 # ...
