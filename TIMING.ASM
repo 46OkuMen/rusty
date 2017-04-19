@@ -141,3 +141,29 @@ b0a0e677b050e675e4753c00ebf0
 
 ; Testing this out:
 b0a0e677b050e675e4753c0074fa1f619dc390909090909090909090
+
+; Speedhack #2, processor independent, but crashes x86.
+
+b0a0e677b0ffe675e4753c0075fa1f619dc390909090909090909090
+
+0:  b0 a0                   mov    al,0xa0
+2:  e6 77                   out    0x77,al
+4:  b0 ff                   mov    al,0xff
+6:  e6 75                   out    0x75,al
+8:  e4 75                   in     al,0x75
+a:  3c 00                   cmp    al,0x0
+c:  75 fa                   jne    0x8
+e:  1f                      pop    ds
+f:  61                      popa
+10: 9d                      popf
+11: c3                      ret
+12: 90                      nop
+13: 90                      nop
+14: 90                      nop
+15: 90                      nop
+16: 90                      nop
+17: 90                      nop
+18: 90                      nop
+19: 90                      nop
+1a: 90                      nop
+1b: 90                      nop

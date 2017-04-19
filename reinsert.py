@@ -34,8 +34,12 @@ for filename in files_to_reinsert:
         GF.edit(0x4048, '\x2e\x82') # period pause handling
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
         # See TIMING.ASM for this last one
-        GF.edit(0x4547, '\xb0\xa0\xe6\x77\xb0\xff\xe6\x75\xe4\x75\x3c\x00\x75\xfa\x1f\x61\x9d\xc3\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90')
+        GF.edit(0x4547, '\xb0\xa0\xe6\x77\xb0\xdc\xe6\x75\xe4\x75\x3c\x00\x75\xfa\x1f\x61\x9d\xc3\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90')
         # b0 a0 e6 77 b0 ff e6 75 e4 75 3c 00 75 fa 1f 61 9d c3                                    90  90  90  90  90  90  90  90  90  90
+
+        # df = a little too fast
+        # de = too slow
+        # dd = super fast
 
         for i, p in enumerate(pointers.itervalues()):
             print "considering translations from pointer", p

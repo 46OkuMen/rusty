@@ -5,18 +5,34 @@ import os
 SRC_DISK_DIR = 'original\\'
 SRC_DISK_PATH = 'original\\rusty.hdi'
 
+NK_DISK_DIR = 'original\\NK'
+
+NK_HDI_PATH = os.path.join(NK_DISK_DIR, 'Rusty.hdi')
+NK_DISK_SYSTEM_PATH = os.path.join(NK_DISK_DIR, 'Rusty (System disk).hdm')
+NK_DISK_OPENING_PATH = os.path.join(NK_DISK_DIR, 'Rusty (Opening disk).hdm')
+NK_DISK_A_PATH = os.path.join(NK_DISK_DIR, 'Rusty (Game disk A).hdm')
+NK_DISK_B_PATH = os.path.join(NK_DISK_DIR, 'Rusty (Game disk B).hdm')
+
 DEST_DISK_DIR = 'patched\\'
 DEST_DISK_PATH = 'patched\\rusty.hdi'
 
 FILES = ['JO.EXE', 'OP.COM', 'VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM',
          'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
-         'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']
+         'STORY10.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']
 
-EDITED_FILES = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
-                'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
-                'ENEMY9.COM', 'ENEMY10.COM', 'JO.EXE', 'OP.COM', 'GRPEGC.COM', 'GIRL2A.MAG', 'GIRL5A.MAG',
-                'GIRL7A.MAG', 'R_A23.MGX', 'R_A31.MGX', 'R_A36.MGX', 'STAFF1.MGX', 'STAFF2.MGX', 'STAFF3.MGX',
-                'STAFF4.MGX', 'STAFF5.MGX', 'STAFF6.MGX', 'STAFF7.MGX']
+DISK_FILES = (  # System disk
+                ['VISUAL.COM', 'JO.EXE', 'GRPEGC.COM', 'OP.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 
+                 'STORY4.COM', 'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
+                 'STORY10.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM',],
+                # Opening disk
+                ['R_A23.MGX', 'R_A31.MGX', 'R_A36.MGX', 'STAFF1.MGX', 'STAFF2.MGX', 'STAFF3.MGX',
+                'STAFF4.MGX', 'STAFF5.MGX', 'STAFF6.MGX', 'STAFF7.MGX'],
+                # Game disk A
+                ['GIRL2A.MAG',],
+                # Game disk B
+                ['GIRL5A.MAG', 'GIRL7A.MAG'],
+)
+
 
 UNCOMPRESSED_FILES = ['JO.EXE', 'OP.COM']
 
@@ -152,6 +168,26 @@ WINDOW_EXPANSIONS = [
 SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34
 VISUAL_MAX_WIDTH = 40
+
+common_filenames = [
+  ('Rusty (System disk).hdm',
+   'Rusty (Opening disk).hdm',
+   'Rusty (Game disk A).hdm',
+   'Rusty (Game disk B).hdm'),
+  ('Rusty (System disk) [Alt 1].hdm',
+   'Rusty (Opening disk).hdm',
+   'Rusty (Game disk A).hdm',
+   'Rusty (Game disk B).hdm'),
+  ('Rusty.hdi'),
+  ('rusty.hdi')
+]
+
+common_path_in_disk = [
+    '.',
+    '.',
+    '.',
+    'RUSTY\\',  # Yam's Rance World
+]
 
 # Order of text display in the game:
 # Intro cinematic
