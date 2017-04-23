@@ -164,6 +164,8 @@ WINDOW_EXPANSIONS = [
                 ('ENEMY10.COM', 0x37b3, 0x1), # "!?" (srhink)
 ]
 
+# TODO: Shrink the "The Marquis de Monte Carlo draws nigh..." window to 2 rows rather than 4.
+
 
 SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34

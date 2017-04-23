@@ -166,24 +166,24 @@ def compress(src, dest):
     #BW_palette.extend([b'\xFF\xFF\xFF']*15)
 
     with open(dest, 'wb') as f:
-        x0 = 232
-        y0 = 158
-        x1 = 396
-        y1 = 230
+        x0 = 16
+        y0 = 116
+        x1 = 592
+        y1 = 248
 
         # x1: x0 + width - 4.
 
         # Really important to get the width right, obviously!!
-        # R_A23: 0, 120, 624, 264, flag_b = 0x2880
-        # R_A31: 16, 116, 624, 276, flag_b = 0x2880
-        # R_A36: 16, 116, 624, 258, flag_b = 0x2880
+        # R_A23: 0, 140, 624, 228
+        # R_A31: 16, 116, 608, 260
+        # R_A36: 16, 116, 592, 248
         # STAFF1: 136, 168, 500, 210, flag_b = 0x2880
         # STAFF2: 136, 130, 500, 258
         # STAFF3: 136, 130, 500, 264
         # STAFF4: 176, 130, 476, 248
         # STAFF5: 136, 150, 516, 220
         # STAFF6: 136, 168, 500, 207
-        # STAFF7:
+        # STAFF7: 232, 158, 396, 230
 
         #flag_a_location = 0x50
         #flag_b_location = 0x7ba
@@ -196,10 +196,6 @@ def compress(src, dest):
         flag_a_location = 0x50
         flag_b_location = flag_a_size + flag_a_location
         color_index_stream_location = flag_b_location + flag_b_size
-
-        # TODO: Need to set these flags according to the size of the image, duh.
-        # Too long, and garbage gets added to the end of the image. To short, and the image is truncated.
-        # Probably need to write the output to a buffer first, then determine the size of those things.
 
         # Flag A should be the output / 8.
         # Flag B can be 0, for all I know.
@@ -259,7 +255,7 @@ def compress(src, dest):
 
 
 if __name__ == '__main__':
-    target = 'STAFF7'
+    target = 'R_A36'
     compress(target + '.bmp', target + '.MGX')
     RustyDisk = Disk(DEST_DISK_PATH)
     RustyDisk.insert(target + '.MGX', '/RUSTY')

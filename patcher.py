@@ -68,9 +68,10 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
 if __name__ == '__main__':
     #print patch('rusty.hdi', path_in_disk='RUSTY\\')
-    #print patch('Rusty.hdi')
-    print patch('Rusty (System disk).hdm', 'Rusty (Opening disk).hdm', 'Rusty (Game disk A).hdm', 'Rusty (Game disk B).hdm')
+    print patch('Rusty.hdi')
+    #print patch('Rusty (System disk).hdm', 'Rusty (Opening disk).hdm', 'Rusty (Game disk A).hdm', 'Rusty (Game disk B).hdm')
     # The patcher GUI should try the other path_in_disk if the first one doesn't work.
 
-    # TODO: Need to do real LZSS compression in order to get the MGX files to fit in the Opening FDI.
-    
+    # TODO: Not enough room in the Opening FDI, so need to expand it.
+    # Include a 2MB floppy image, then copy all the files into it if it's needed.
+        # So, how do I create this 2MB floppy? HDMs max out at 1,232 KB...

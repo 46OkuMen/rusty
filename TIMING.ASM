@@ -146,18 +146,22 @@ b0a0e677b050e675e4753c0074fa1f619dc390909090909090909090
 
 b0a0e677b0ffe675e4753c0075fa1f619dc390909090909090909090
 
-0:  b0 a0                   mov    al,0xa0
+0:  b0 a0                   mov    al,0xa0   ; Set the control word: counter #2, high byte only
 2:  e6 77                   out    0x77,al
-4:  b0 ff                   mov    al,0xff
+
+4:  b0 ff                   mov    al,0xff   ; load ff into counter #2
 6:  e6 75                   out    0x75,al
-8:  e4 75                   in     al,0x75
+
+8:  e4 75                   in     al,0x75   ; repeatedly read counter #2
 a:  3c 00                   cmp    al,0x0
-c:  75 fa                   jne    0x8
-e:  1f                      pop    ds
+c:  75 fa                   jne    $-4
+
+e:  1f                      pop    ds        ; cleanup and return
 f:  61                      popa
 10: 9d                      popf
 11: c3                      ret
-12: 90                      nop
+
+12: 90                      nop              ; fill space
 13: 90                      nop
 14: 90                      nop
 15: 90                      nop
