@@ -166,32 +166,43 @@ def compress(src, dest):
     #BW_palette.extend([b'\xFF\xFF\xFF']*15)
 
     with open(dest, 'wb') as f:
-        x0 = 216
-        y0 = 130
-        x1 = 404
-        y1 = 224
+        x0 = 232
+        y0 = 158
+        x1 = 380
+        y1 = 210
+
+        flag_a_size = 0x20
+        flag_b_size = 0x400
 
         # x1: x0 + width - 4.
 
         # Really important to get the width right, obviously!!
-        # R_A23: 0, 140, 624, 228, flag_b = 0x2880
-        # R_A31: 16, 116, 608, 260
-        # R_A36: 16, 116, 592, 248
+        # R_A23: 8, 140, 620, 232, flag_a= 0x20, flag_b = 0x1b00
+        # R_A31: 16, 116, 608, 255, flag_a = 0x30, flag_b = 0x2900
+        # R_A36: 16, 116, 584, 247, flag_a = 0x30, flag_b = 0x2400
         # STAFF1: 232, 168, 372, 192 flag_b = 0x500
-        # STAFF2: 216, 130, 404, 224
-        # STAFF3: 136, 130, 500, 264
-        # STAFF4: 176, 130, 476, 248
-        # STAFF5: 136, 150, 516, 220
-        # STAFF6: 136, 168, 500, 207
-        # STAFF7: 232, 158, 396, 230
+        # STAFF2: 216, 130, 404, 206, flag_a = 0x20, flag_b = 0x700
+        # STAFF3: 232, 120, 420, 226, flag_a = 0x20, flag_b = 0xa00
+        # STAFF4: 232, 130, 404, 241, flag_a = 0x20, flag_b = 0xa00
+        # STAFF5: 248, 190, 384, 213, flag_a = 0x20, flag_b = 0x200
+        # STAFF6: 232, 168, 432, 196, flag_a = 0x20, flag_b = 0x300
+        # STAFF7: 232, 158, 396, 226, flag_a = 0x20, flag_b = 0x800
 
-        #flag_a_location = 0x50
-        #flag_b_location = 0x7ba
-        #color_index_stream_location = 0x10b5
+        # R_A23: 41 kb -> 36 kb
+        # R_A31: 54 kb -> 52 kb
+        # R_A36: 50 kb -> 48 kb
 
-        #flag_a_size = 0x76a
-        flag_a_size = 0x200
-        flag_b_size = 0x900
+        # STAFF1: 4 kb
+        # STAFF2: 10 kb
+        # STAFF3: 14 kb
+        # STAFF4: 13 kb
+        # STAFF5: 6 kb -> 3 kb
+        # STAFF6: 4 kb
+        # STAFF7: 8 kb -> 6 kb
+
+        # Need room for last 3 files, or 18 kb.
+        # Still 5 kb left on the disk, so need 13 kb of reductions
+        # Need 1 kb more reductions after R and STAFF5
 
         flag_a_location = 0x50
         flag_b_location = flag_a_size + flag_a_location
@@ -200,8 +211,6 @@ def compress(src, dest):
         # Flag A should be the output / 8.
         # Flag B can be 0, for all I know.
 
-        #flag_a_size = flag_b_location - flag_a_location
-        #flag_b_size = color_index_stream_location - flag_b_location
         color_index_stream_size = 0xb000 # has no effect on anything...?
 
         print hex(flag_a_size)
@@ -255,7 +264,7 @@ def compress(src, dest):
 
 
 if __name__ == '__main__':
-    target = 'STAFF2'
+    target = 'STAFF7'
     compress(target + '.bmp', target + '.MGX')
     RustyDisk = Disk(DEST_DISK_PATH)
     RustyDisk.insert(target + '.MGX', '/RUSTY')
