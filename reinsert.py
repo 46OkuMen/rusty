@@ -13,7 +13,7 @@ SCENE_TO_TEST = 0     # 0-5 for scenes 1-6.
 
 files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
                      'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
-                     'ENEMY9.COM', 'ENEMY10.COM', 'OP.COM', ]
+                     'ENEMY9.COM', 'ENEMY10.COM', ]
 #files_to_reinsert = ['VISUAL.COM']
 
 for filename in files_to_reinsert:
@@ -34,7 +34,7 @@ for filename in files_to_reinsert:
         GF.edit(0x4048, '\x2e\x82') # period pause handling
         GF.edit(0x3e39, '\x04\xdf\x90\x90\x90\x90\x90\x90') # fix lowercase char shifting by 1
         # See TIMING.ASM for this last one
-        GF.edit(0x4547, '\xb0\xa0\xe6\x77\xb0\xdc\xe6\x75\xe4\x75\x3c\x00\x75\xfa\x1f\x61\x9d\xc3\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90')
+        #GF.edit(0x4547, '\xb0\xa0\xe6\x77\xb0\xdc\xe6\x75\xe4\x75\x3c\x00\x75\xfa\x1f\x61\x9d\xc3\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90')
         # b0 a0 e6 77 b0 ff e6 75 e4 75 3c 00 75 fa 1f 61 9d c3                                    90  90  90  90  90  90  90  90  90  90
 
         # df = a little too fast

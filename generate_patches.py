@@ -16,8 +16,19 @@ for f in FILES:
     patch_destination = os.path.join('patch', patch_filename)
     filepatch = Patch(f, patch_destination, edited='edited_' + f)
     filepatch.create()
+
+    if f == 'VISUAL.COM':
+        # (Just floating free in the root directory, not a great look.)
+        speedhack_edited_file ='VISUAL_speedhack.COM'
+        patch_filename = 'VISUAL_speedhack.COM.xdelta'
+        patch_destination = os.path.join('patch', patch_filename)
+        filepatch = Patch(f, patch_filename, edited=speedhack_edited_file)
+        filepatch.create()
+
     os.remove(f)
     os.remove('edited_' + f)
+
+# Get the VISUAL speedhack version as well.
 
 # Separate patches for the FD and HD images.
 # FD intro images are all smaller, and lack roles for the credits.

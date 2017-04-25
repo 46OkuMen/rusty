@@ -4,7 +4,7 @@ from rominfo import DISK_FILES, IMAGES
 from romtools.disk import Disk, FileNotFoundError, UnicodePathError, HARD_DISK_FORMATS
 from romtools.patch import Patch, PatchChecksumError
 
-def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backup_folder='./backup'):
+def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backup_folder='./backup', speedhack=False):
     # HDIs just have the one disk, received as the arg sysDisk.
     if not opDisk and not diskA and not diskB:
         disks = [sysDisk, sysDisk, sysDisk, sysDisk]
@@ -94,6 +94,9 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
                 print "It's a floppy, so using the floppy patch for %s" % f
                 patch_filename = f.replace('.', '_FD.') + '.xdelta'
                 patch_filepath = path.join('patch', patch_filename)
+            elif f == 'VISUAL.COM' and speedhack:
+                patch_filename = f.replace('.', '_speedhack.') + '.xdelta'
+                patch_filepath = path.join('patch', patch_filename)
             else:
                 patch_filepath = path.join('patch', f + '.xdelta')
 
@@ -122,6 +125,6 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
 if __name__ == '__main__':
     #print patch('rusty.hdi', path_in_disk='RUSTY\\')
-    #print patch('Rusty.hdi')
-    print patch('Rusty (System disk).hdm', 'Rusty (Opening disk).hdm', 'Rusty (Game disk A).hdm', 'Rusty (Game disk B).hdm')
+    print patch('Rusty.hdi', speedhack=False)
+    #print patch('Rusty (System disk).hdm', 'Rusty (Opening disk).hdm', 'Rusty (Game disk A).hdm', 'Rusty (Game disk B).hdm')
     # The patcher GUI should try the other path_in_disk if the first one doesn't work.
