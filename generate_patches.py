@@ -1,13 +1,13 @@
 import os
 import shutil
-from rominfo import EDITED_FILES, SRC_DISK_PATH, DEST_DISK_PATH
+from rominfo import FILES, IMAGES, SRC_DISK_PATH, DEST_DISK_PATH
 from romtools.disk import Disk
 from romtools.patch import Patch
 
 RustyDiskOriginal = Disk(SRC_DISK_PATH)
 RustyDiskEdited = Disk(DEST_DISK_PATH)
 
-for f in EDITED_FILES:
+for f in FILES:
     RustyDiskEdited.extract('RUSTY\\' + f, dest_path=os.curdir)
     shutil.copyfile(f, 'edited_' + f)
     RustyDiskOriginal.extract('RUSTY\\' + f, dest_path=os.curdir)
@@ -19,16 +19,18 @@ for f in EDITED_FILES:
     os.remove(f)
     os.remove('edited_' + f)
 
-# HD versions of images, without "insert disk" text
-for mag in ('GIRL2A.MAG', 'GIRL7A.MAG'):
-    RustyDiskOriginal.extract('RUSTY\\' + mag, dest_path=os.curdir)
-    hd_mag = mag.replace('.', '_HD.')
-    hd_mag_path = os.path.join('img', hd_mag)
-    patch_filename = hd_mag + '.xdelta'
-    patch_destination = os.path.join('patch', patch_filename)
-    filepatch = Patch(mag, patch_destination, edited=hd_mag_path)
-    filepatch.create()
-    os.remove(mag)
+# Separate patches for the FD and HD images.
+# FD intro images are all smaller, and lack roles for the credits.
+# 
+for img in IMAGES:
+    RustyDiskOriginal.extract('RUSTY\\' + img, dest_path=os.curdir)
+    for version in ('FD', 'HD'):
+        version_img_path = os.path.join('patched', version + '_images', img)
+        patch_filename = img.replace('.', '_%s.' % version) + '.xdelta'    # STAFF1.MAG -> STAFF1_FD.MAG.xdelta
+        patch_destination = os.path.join('patch', patch_filename)
+        filepatch = Patch(img, patch_destination, edited=version_img_path)
+        filepatch.create()
+    os.remove(img)
 
 
 """

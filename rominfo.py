@@ -20,6 +20,10 @@ FILES = ['JO.EXE', 'OP.COM', 'VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.C
          'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
          'STORY10.COM', 'ENEMY4.COM', 'ENEMY9.COM', 'ENEMY10.COM']
 
+IMAGES = ['GIRL2A.MAG', 'GIRL5A.MAG', 'GIRL7A.MAG', 'R_A23.MGX', 'R_A31.MGX', 'R_A36.MGX',
+          'STAFF1.MGX', 'STAFF2.MGX', 'STAFF3.MGX', 'STAFF4.MGX', 'STAFF5.MGX', 'STAFF6.MGX',
+          'STAFF7.MGX']
+
 DISK_FILES = (  # System disk
                 ['VISUAL.COM', 'JO.EXE', 'GRPEGC.COM', 'OP.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 
                  'STORY4.COM', 'STORY5.COM', 'STORY6.COM', 'STORY7.COM', 'STORY8.COM', 'STORY9.COM',
@@ -32,7 +36,6 @@ DISK_FILES = (  # System disk
                 # Game disk B
                 ['GIRL5A.MAG', 'GIRL7A.MAG'],
 )
-
 
 UNCOMPRESSED_FILES = ['JO.EXE', 'OP.COM']
 
@@ -156,6 +159,7 @@ SCENE_POINTERS = [0x632, # scene 1
 WINDOW_EXPANSIONS = [
                 ('STORY6.COM', 0xac0, 0x5), # "You okay?"
                 ('STORY6.COM', 0xb40, 0x2), # "Yes?"
+                ('STORY8.COM', 0xc36, 0x2), # 'The resurrection of the M[...] draws nigh...' window height
                 ('STORY9.COM', 0xa7a, 0xd), # "A voice boomed from above."
                 ('STORY9.COM', 0xafa, 0x3), # "Cur!!" (shrink)
                 ('STORY9.COM', 0xb3a, 0x3), # "Goal?" (shrink)
@@ -163,9 +167,6 @@ WINDOW_EXPANSIONS = [
                 ('STORY10.COM', 0x707, 0x13), # "A grave voice booms from somewhere..." x width
                 ('ENEMY10.COM', 0x37b3, 0x1), # "!?" (srhink)
 ]
-
-# TODO: Shrink the "The Marquis de Monte Carlo draws nigh..." window to 2 rows rather than 4.
-
 
 SHORT_STORY_MAX_WIDTH = 27
 STORY_MAX_WIDTH = 34

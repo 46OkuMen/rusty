@@ -13,7 +13,7 @@ SCENE_TO_TEST = 0     # 0-5 for scenes 1-6.
 
 files_to_reinsert = ['VISUAL.COM', 'STORY1.COM', 'STORY2.COM', 'STORY3.COM', 'STORY4.COM', 'STORY5.COM', 'STORY6.COM',
                      'STORY7.COM', 'STORY8.COM', 'STORY9.COM', 'STORY10.COM', 'ENEMY1.COM', 'ENEMY4.COM',
-                     'ENEMY9.COM', 'ENEMY10.COM' ]
+                     'ENEMY9.COM', 'ENEMY10.COM', 'OP.COM', ]
 #files_to_reinsert = ['VISUAL.COM']
 
 for filename in files_to_reinsert:
@@ -40,6 +40,7 @@ for filename in files_to_reinsert:
         # df = a little too fast
         # de = too slow
         # dd = super fast
+        # dc = just right
 
         for i, p in enumerate(pointers.itervalues()):
             print "considering translations from pointer", p
