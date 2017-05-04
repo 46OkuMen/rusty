@@ -1,7 +1,7 @@
 from os import path, remove
 from shutil import copyfile
 from rominfo import DISK_FILES, IMAGES
-from romtools.disk import Disk, FileNotFoundError, UnicodePathError, HARD_DISK_FORMATS
+from romtools.disk import Disk, FileNotFoundError, UnicodePathError, FileFormatNotSupportedError, HARD_DISK_FORMATS
 from romtools.patch import Patch, PatchChecksumError
 
 def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backup_folder='./backup', speedhack=False):
@@ -13,10 +13,11 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
     else:
         raise Exception # TODO: Gotta be something better than this
 
-    print DISK_FILES
-
     for disk_index, d in enumerate(DISK_FILES):
-        RustyDiskOriginal = Disk(disks[disk_index], backup_folder=backup_folder)
+        try:
+            RustyDiskOriginal = Disk(disks[disk_index], backup_folder=backup_folder)
+        except FileFormatNotSupportedError as e:
+            return e.message
         RustyDiskOriginal.backup()
 
         disk_dir = path.dirname(disks[disk_index])
@@ -25,7 +26,7 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
         disk_format = disks[disk_index].split('.')[-1].lower()
 
-        print d
+        print(d)
 
         # Opening disk in FDI presents some unique issues.
         # Need to do all the patching in a batch so there's enough room in the disk.
@@ -55,19 +56,19 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
                     remove(extracted_file_path + '_edited')
                     return "Checksum error in file %s." % f
-        
+
                 copyfile(extracted_file_path + '_edited', extracted_file_path)
 
 
-            print "Entering delete loop"
+            print("Entering delete loop")
             for f in d:
-                print "Deleting %s from disk", f
+                print("Deleting %s from disk", f)
                 extracted_file_path = disk_dir + '\\' + f
                 RustyDiskOriginal.delete(extracted_file_path, path_in_disk)
 
-            print "Entering insert loop"
+            print("Entering insert loop")
             for f in d:
-                print "Inserting %s into disk", f
+                print("Inserting %s into disk", f)
                 extracted_file_path = disk_dir + '\\' + f
                 RustyDiskOriginal.insert(extracted_file_path, path_in_disk, delete_original=False)
                 remove(extracted_file_path)
@@ -77,7 +78,7 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
         # All other cases
         for f in d:
-            print f
+            print(f)
             try:
                 RustyDiskOriginal.extract(f, path_in_disk)
             except FileNotFoundError:
@@ -87,11 +88,11 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
                 return "Patching in paths containing non-ASCII characters not supported."
 
             if f in IMAGES and RustyDiskOriginal.extension.lower() in HARD_DISK_FORMATS:
-                print "It's an HDI, so using a different %s patch" % f
+                print("It's an HDI, so using a different %s patch" % f)
                 patch_filename = f.replace('.', '_HD.') + '.xdelta'
                 patch_filepath = path.join('patch', patch_filename)
             elif f in IMAGES:
-                print "It's a floppy, so using the floppy patch for %s" % f
+                print("It's a floppy, so using the floppy patch for %s" % f)
                 patch_filename = f.replace('.', '_FD.') + '.xdelta'
                 patch_filepath = path.join('patch', patch_filename)
             elif f == 'VISUAL.COM' and speedhack:
@@ -100,7 +101,6 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
             else:
                 patch_filepath = path.join('patch', f + '.xdelta')
 
-            print disk_dir
             extracted_file_path = disk_dir + '\\' + f
 
             copyfile(extracted_file_path, extracted_file_path + '_edited')
@@ -125,6 +125,6 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
 
 if __name__ == '__main__':
     #print patch('rusty.hdi', path_in_disk='RUSTY\\')
-    print patch('Rusty.hdi', speedhack=False)
+    print(patch('Rusty.hdi', speedhack=False))
     #print patch('Rusty (System disk).hdm', 'Rusty (Opening disk).hdm', 'Rusty (Game disk A).hdm', 'Rusty (Game disk B).hdm')
     # The patcher GUI should try the other path_in_disk if the first one doesn't work.

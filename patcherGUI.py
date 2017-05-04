@@ -1,10 +1,12 @@
-import Tkinter, Tkconstants, tkFileDialog
+import tkinter, tkinter.constants, tkinter.filedialog
 import sys
 import time
 from os import listdir, getcwd, chdir
 from os import path as ospath
-from ttk import *
-import tkMessageBox
+from tkinter.ttk import *
+from contextlib import redirect_stdout
+import tkinter.messagebox
+
 from patcher import patch
 from rominfo import common_filenames
 from romtools.disk import HARD_DISK_FORMATS
@@ -12,11 +14,11 @@ from romtools.disk import HARD_DISK_FORMATS
 # TODO: Enter to press the "Patch" button.
 # TODO: Use a labelframe to clean things up a bit?
 
-class PatcherGUI(Tkinter.Frame):
+class PatcherGUI(tkinter.Frame):
 
     def __init__(self, root):
 
-        Tkinter.Frame.__init__(self, root)
+        tkinter.Frame.__init__(self, root)
 
         Label(self, text="Rusty, English Translation by 46 OkuMen")
         # define buttons
@@ -26,11 +28,11 @@ class PatcherGUI(Tkinter.Frame):
         Label(self, text="Game Disk B").grid(row=4, column=0, sticky='E')
         Label(self, text="Game Disk C").grid(row=5, column=0, sticky='E')
 
-        sysDisk = Tkinter.StringVar()
-        opDisk = Tkinter.StringVar()
-        gameDiskA = Tkinter.StringVar()
-        gameDiskB = Tkinter.StringVar()
-        self.PatchStr = Tkinter.StringVar()
+        sysDisk = tkinter.StringVar()
+        opDisk = tkinter.StringVar()
+        gameDiskA = tkinter.StringVar()
+        gameDiskB = tkinter.StringVar()
+        self.PatchStr = tkinter.StringVar()
         self.PatchStr.set('Patch')
 
         SysEntry = Entry(self, textvariable=sysDisk)
@@ -51,7 +53,7 @@ class PatcherGUI(Tkinter.Frame):
         # TODO: If I set these to attributes, it will probably cut down on all the argument passing I'm doing
         all_entry_text = [sysDisk, opDisk, gameDiskA, gameDiskB]
         secondary_entries = [OpEntry, GameDiskAEntry, GameDiskBEntry]
-        self.advanced_active = Tkinter.BooleanVar(False)
+        self.advanced_active = tkinter.BooleanVar(False)
 
         SysBrowse = Button(self, text='Browse...', command= lambda: self.askopenfilenamesysDisk(sysDisk, all_entry_text, secondary_entries))
         OpBrowse = Button(self, text='Browse...', command= lambda: self.askopenfilename(opDisk, all_entry_text, secondary_entries))
@@ -67,14 +69,14 @@ class PatcherGUI(Tkinter.Frame):
         self.PatchBtn.grid(row=9, column=5)
         self.PatchBtn['state'] = 'disabled'
 
-        SpeedhackOn = Tkinter.IntVar(value=0)
-        SpeedhackBox = Tkinter.Checkbutton(self, text="Faster text (requires Neko Project II)", variable=SpeedhackOn)
+        SpeedhackOn = tkinter.IntVar(value=0)
+        SpeedhackBox = tkinter.Checkbutton(self, text="Faster text (requires Neko Project II)", variable=SpeedhackOn)
         SpeedhackBox.grid(row=7, column=0, columnspan=2)
 
         AdvancedBtn = Button(self, text="Advanced...", command= lambda: self.toggleadvanced(AdvancedPath, AdvancedLabel))
         AdvancedBtn.grid(row=9, column=2)
 
-        pathInDisk = Tkinter.StringVar('')
+        pathInDisk = tkinter.StringVar('')
         AdvancedPath = Entry(self, textvariable=pathInDisk)
         AdvancedLabel = Label(self, text="Path In Disk")
 
@@ -101,7 +103,7 @@ class PatcherGUI(Tkinter.Frame):
         """
 
         # get filename
-        filename = tkFileDialog.askopenfilename(**self.file_opt)
+        filename = tkinter.filedialog.askopenfilename(**self.file_opt)
         field.set(filename)
 
         self.checkCommonFilenames(all_entry_text)
@@ -109,7 +111,7 @@ class PatcherGUI(Tkinter.Frame):
         self.toggleDiskBFields(filename, secondary_entries, self.PatchBtn)
 
     def askopenfilename(self, field, all_entry_text, secondary_entries):
-        filename = tkFileDialog.askopenfilename(**self.file_opt)
+        filename = tkinter.filedialog.askopenfilename(**self.file_opt)
         field.set(filename)
         self.checkCommonFilenames(all_entry_text)
 
@@ -118,7 +120,7 @@ class PatcherGUI(Tkinter.Frame):
         else:
             self.PatchBtn['state'] = 'disabled'
 
-        print "Calling toggleDiskBFields"
+        print("Calling toggleDiskBFields")
         self.toggleDiskBFields(filename, secondary_entries, self.PatchBtn)
 
     def checkCommonFilenames(self, all_entry_text):
@@ -140,13 +142,13 @@ class PatcherGUI(Tkinter.Frame):
                 d['state'] = 'disabled'
             self.PatchBtn['state'] = 'normal'
         elif all([d.get() for d in secondary_entries]):
-            print [d.get() for d in secondary_entries]
-            print "All secondary entries are filled in"
+            print([d.get() for d in secondary_entries])
+            print("All secondary entries are filled in")
             for d in secondary_entries:
                 d['state'] = 'normal'
             self.PatchBtn['state'] = 'normal'
         else:
-            print "Setting the secondary entries back to normal"
+            print("Setting the secondary entries back to normal")
             for d in secondary_entries:
                 d['state'] = 'normal'
             self.PatchBtn['state'] = 'disabled'
@@ -156,7 +158,7 @@ class PatcherGUI(Tkinter.Frame):
         backup = ospath.join(exe_dir, 'backup')
 
         sysDisk = sys.get()
-        print "Speedhack value:", speedhack
+        print("Speedhack value:", speedhack.get())
         if sysDisk.split('.')[-1].lower() in HARD_DISK_FORMATS:
             if self.advanced_active.get():
                 result = patch(sysDisk, path_in_disk=path.get(), backup_folder=backup, speedhack=speedhack.get())
@@ -167,11 +169,14 @@ class PatcherGUI(Tkinter.Frame):
             
         self.patchBtnIdle()
         if not result:
-            print "Patching was successful"
-            tkMessageBox.showinfo('Patch successful!', 'Go play it now.')
+            print("Patching was successful")
+            tkinter.messagebox.showinfo('Patch successful!', 'Go play it now.')
         else:
-            print "Error while patching:", result
-            tkMessageBox.showerror('Error', 'Error: ' + result)
+            try:
+                print("Error while patching:", result)
+            except UnicodeEncodeError:
+                print("Error while patching:", repr(result))
+            tkinter.messagebox.showerror('Error', 'Error: ' + result)
 
         
 
@@ -187,12 +192,12 @@ class PatcherGUI(Tkinter.Frame):
 
 
     def patchBtnIdle(self):
-        print "Editing patchstr and patchbtn now"
+        print("Editing patchstr and patchbtn now")
         self.PatchStr.set('Patch')
         self.PatchBtn['state'] = 'normal'
 
     def toggleadvanced(self, advpath, advlabel):
-        print "advanced_active:", self.advanced_active.get()
+        print("advanced_active:", self.advanced_active.get())
         if self.advanced_active.get():
             root.geometry('400x180')
             advpath.grid_forget()
@@ -211,17 +216,15 @@ if __name__=='__main__':
         chdir(sys._MEIPASS)
 
     # TODO: Uncomment these for release.
-    #logfilename = ospath.join(exe_dir, 'rusty-patch-log.txt')
-    #sys.stderr = sys.stdout = open(logfilename, 'w', 0)
-    #print "\n", time.ctime(time.time())
+    # Python 3 version
+    logfilename = ospath.join(exe_dir, 'rusty-patch-log.txt')
+    with open(logfilename, 'w') as f:
+        with redirect_stdout(f):
+            print("\n", time.ctime(time.time()))
 
-    root = Tkinter.Tk()
-    root.title('Rusty Patcher')
-    root.iconbitmap('46.ico')
-    root.geometry('400x180')
-    PatcherGUI(root).pack()
-    root.mainloop()
-
-# TODO: Handle unicode filenames/filepaths.
-    # Appears to be a bug in python 2.7 subprocess that they won't fix. Should I do 2to3?
-    # Used an error message for now
+            root = tkinter.Tk()
+            root.title('Rusty Patcher')
+            root.iconbitmap('46.ico')
+            root.geometry('400x180')
+            PatcherGUI(root).pack()
+            root.mainloop()

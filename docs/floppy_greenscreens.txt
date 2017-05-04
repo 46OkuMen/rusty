@@ -1,0 +1,9 @@
+09 = ASCII tab
+20 = ASCII space
+8140 = SJIS space
+
+tab = 6 spaces
+The $X disk number eats up the next 9 bytes.
+
+the return key.
+Z, X, or SPACE.
