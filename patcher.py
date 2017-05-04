@@ -1,7 +1,7 @@
 from os import path, remove
 from shutil import copyfile
 from rominfo import DISK_FILES, IMAGES
-from romtools.disk import Disk, FileNotFoundError, UnicodePathError, FileFormatNotSupportedError, HARD_DISK_FORMATS
+from romtools.disk import Disk, FileNotFoundError, FileFormatNotSupportedError, HARD_DISK_FORMATS
 from romtools.patch import Patch, PatchChecksumError
 
 def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backup_folder='./backup', speedhack=False):
@@ -17,28 +17,30 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
         try:
             RustyDiskOriginal = Disk(disks[disk_index], backup_folder=backup_folder)
         except FileFormatNotSupportedError as e:
-            return e.message
-        RustyDiskOriginal.backup()
+            return "File format not supported"
+
 
         disk_dir = path.dirname(disks[disk_index])
         if len(disk_dir) == 0:
             disk_dir = '.'
 
-        disk_format = disks[disk_index].split('.')[-1].lower()
+        #disk_format = disks[disk_index].split('.')[-1].lower()
+
+        # Don't want to backup the HDI multiple times, but do want to backup all floppies.
+        if RustyDiskOriginal.extension not in HARD_DISK_FORMATS or disk_index == 0:
+            RustyDiskOriginal.backup()
 
         print(d)
 
         # Opening disk in FDI presents some unique issues.
         # Need to do all the patching in a batch so there's enough room in the disk.
-        if disk_index == 1 and RustyDiskOriginal.extension.lower() not in HARD_DISK_FORMATS: 
+        if disk_index == 1 and RustyDiskOriginal.extension not in HARD_DISK_FORMATS: 
             for f in d:
                 try:
-                    RustyDiskOriginal.extract(f, path_in_disk)
+                    RustyDiskOriginal.extract(f, path_in_disk, fallback_path='RUSTY')
                 except FileNotFoundError:
                     RustyDiskOriginal.restore_from_backup()
                     return "File %s not found in disk.\nTry setting the path under 'Advanced'." % f
-                except UnicodePathError:
-                    return "Patching in paths containing non-ASCII characters not supported."
 
                 patch_filename = f.replace('.', '_FD.') + '.xdelta'
                 patch_filepath = path.join('patch', patch_filename)
@@ -64,13 +66,13 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
             for f in d:
                 print("Deleting %s from disk", f)
                 extracted_file_path = disk_dir + '\\' + f
-                RustyDiskOriginal.delete(extracted_file_path, path_in_disk)
+                RustyDiskOriginal.delete(extracted_file_path, path_in_disk, fallback_path='RUSTY')
 
             print("Entering insert loop")
             for f in d:
                 print("Inserting %s into disk", f)
                 extracted_file_path = disk_dir + '\\' + f
-                RustyDiskOriginal.insert(extracted_file_path, path_in_disk, delete_original=False)
+                RustyDiskOriginal.insert(extracted_file_path, path_in_disk, delete_original=False, fallback_path='RUSTY')
                 remove(extracted_file_path)
                 remove(extracted_file_path + '_edited')
 
@@ -80,14 +82,12 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
         for f in d:
             print(f)
             try:
-                RustyDiskOriginal.extract(f, path_in_disk)
+                RustyDiskOriginal.extract(f, path_in_disk, fallback_path='RUSTY')
             except FileNotFoundError:
                 RustyDiskOriginal.restore_from_backup()
                 return "File %s not found in disk.\nTry setting the path under 'Advanced'." % f
-            except UnicodePathError:
-                return "Patching in paths containing non-ASCII characters not supported."
 
-            if f in IMAGES and RustyDiskOriginal.extension.lower() in HARD_DISK_FORMATS:
+            if f in IMAGES and RustyDiskOriginal.extension in HARD_DISK_FORMATS:
                 print("It's an HDI, so using a different %s patch" % f)
                 patch_filename = f.replace('.', '_HD.') + '.xdelta'
                 patch_filepath = path.join('patch', patch_filename)
@@ -117,7 +117,7 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
             copyfile(extracted_file_path + '_edited', extracted_file_path)
 
 
-            RustyDiskOriginal.insert(extracted_file_path, path_in_disk)
+            RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
             remove(extracted_file_path)
             remove(extracted_file_path + '_edited')
 
