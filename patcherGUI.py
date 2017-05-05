@@ -108,7 +108,7 @@ class PatcherGUI(tkinter.Frame):
 
         self.checkCommonFilenames(all_entry_text)
 
-        self.toggleDiskBFields(filename, secondary_entries, self.PatchBtn)
+        self.toggleDiskBFields(filename, secondary_entries)
 
     def askopenfilename(self, field, all_entry_text, secondary_entries):
         filename = tkinter.filedialog.askopenfilename(**self.file_opt)
@@ -121,7 +121,7 @@ class PatcherGUI(tkinter.Frame):
             self.PatchBtn['state'] = 'disabled'
 
         print("Calling toggleDiskBFields")
-        self.toggleDiskBFields(filename, secondary_entries, self.PatchBtn)
+        self.toggleDiskBFields(filename, secondary_entries)
 
     def checkCommonFilenames(self, all_entry_text):
         if sum([len(t.get()) > 0 for t in all_entry_text]) == 1:
@@ -136,17 +136,19 @@ class PatcherGUI(tkinter.Frame):
                             all_entry_text[i].set(disk_filepath)
                     return None
 
-    def toggleDiskBFields(self, sysDiskFilename, secondary_entries, patchbtn):
+    def toggleDiskBFields(self, sysDiskFilename, secondary_entries):
         if sysDiskFilename.split('.')[-1] in HARD_DISK_FORMATS:
             for d in secondary_entries:
                 d['state'] = 'disabled'
             self.PatchBtn['state'] = 'normal'
+            self.PatchBtn.focus()
         elif all([d.get() for d in secondary_entries]):
             print([d.get() for d in secondary_entries])
             print("All secondary entries are filled in")
             for d in secondary_entries:
                 d['state'] = 'normal'
             self.PatchBtn['state'] = 'normal'
+            self.PatchBtn.focus()
         else:
             print("Setting the secondary entries back to normal")
             for d in secondary_entries:
@@ -178,7 +180,6 @@ class PatcherGUI(tkinter.Frame):
                 print("Error while patching:", repr(result))
             tkinter.messagebox.showerror('Error', 'Error: ' + result)
 
-        
 
     def patchBtnCommand(self, sys, op, gameA, gameB, path=None, speedhack=False):
         self.patchBtnPatching()

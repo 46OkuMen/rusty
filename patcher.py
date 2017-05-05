@@ -82,6 +82,7 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
         for f in d:
             print(f)
             try:
+                fallback_necessary = RustyDiskOriginal.check_fallback(f, path_in_disk, fallback_path='RUSTY')
                 RustyDiskOriginal.extract(f, path_in_disk, fallback_path='RUSTY')
             except FileNotFoundError:
                 RustyDiskOriginal.restore_from_backup()
@@ -116,8 +117,10 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
         
             copyfile(extracted_file_path + '_edited', extracted_file_path)
 
-
-            RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
+            if fallback_necessary:
+                RustyDiskOriginal.insert(extracted_file_path, 'RUSTY')
+            else:
+                RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
             remove(extracted_file_path)
             remove(extracted_file_path + '_edited')
 
