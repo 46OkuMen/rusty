@@ -137,12 +137,13 @@ class PatcherGUI(tkinter.Frame):
                     return None
 
     def toggleDiskBFields(self, sysDiskFilename, secondary_entries):
+        print("SysDisk:", sysDiskFilename)
         if sysDiskFilename.split('.')[-1] in HARD_DISK_FORMATS:
             for d in secondary_entries:
                 d['state'] = 'disabled'
             self.PatchBtn['state'] = 'normal'
             self.PatchBtn.focus()
-        elif all([d.get() for d in secondary_entries]):
+        elif len(sysDiskFilename) > 0 and all([d.get() for d in secondary_entries]):
             print([d.get() for d in secondary_entries])
             print("All secondary entries are filled in")
             for d in secondary_entries:
@@ -219,13 +220,13 @@ if __name__=='__main__':
     # TODO: Uncomment these for release.
     # Python 3 version
     logfilename = ospath.join(exe_dir, 'rusty-patch-log.txt')
-    #with open(logfilename, 'w') as f:
-    #    with redirect_stdout(f):
-    #        print("\n", time.ctime(time.time()))
+    with open(logfilename, 'w') as f:
+        with redirect_stdout(f):
+            print("\n", time.ctime(time.time()))
 
-    root = tkinter.Tk()
-    root.title('Rusty Patcher')
-    root.iconbitmap('46.ico')
-    root.geometry('400x180')
-    PatcherGUI(root).pack()
-    root.mainloop()
+            root = tkinter.Tk()
+            root.title('Rusty Patcher')
+            root.iconbitmap('46.ico')
+            root.geometry('400x180')
+            PatcherGUI(root).pack()
+            root.mainloop()
