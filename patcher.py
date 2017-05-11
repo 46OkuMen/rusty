@@ -1,7 +1,7 @@
 from os import path, remove
 from shutil import copyfile
 from rominfo import DISK_FILES, IMAGES
-from romtools.disk import Disk, FileNotFoundError, FileFormatNotSupportedError, HARD_DISK_FORMATS
+from romtools.disk import Disk, FileNotFoundError, FileFormatNotSupportedError, ReadOnlyDiskError, HARD_DISK_FORMATS
 from romtools.patch import Patch, PatchChecksumError
 
 def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backup_folder='./backup', speedhack=False):
@@ -117,10 +117,13 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
         
             copyfile(extracted_file_path + '_edited', extracted_file_path)
 
-            if fallback_necessary:
-                RustyDiskOriginal.insert(extracted_file_path, 'RUSTY')
-            else:
-                RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
+            try:
+                if fallback_necessary:
+                    RustyDiskOriginal.insert(extracted_file_path, path_in_disk='RUSTY', fallback_path='.')
+                else:
+                    RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
+            except ReadOnlyDiskError:
+                return "Can't write to disk %s. Make sure it's not read-only." % disks[disk_index]
             remove(extracted_file_path)
             remove(extracted_file_path + '_edited')
 
