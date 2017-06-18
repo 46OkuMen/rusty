@@ -16,4 +16,6 @@ Romhacking utilities and notes developed as part of [46 OkuMen](http://46okumen.
 
 
 ### How do I use this?
-* Wait for a release!
+* Download the patch from [romhacking.net](https://www.romhacking.net/translations/2997/) or from [the 46 OkuMen project page](https://46okumen.com/projects/rusty/).
+
+* Using the utilities yourself would be difficult without having our internal translation spreadsheet and game images.

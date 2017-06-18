@@ -102,8 +102,8 @@ val              rel loc
 
 ff = 1 1 1 1 1 1 1 1
 ef = 1 1 1 0 1 1 1 1
-7c = 0 1 1 1 1 1 0 0
 76 = 0 1 1 1 0 1 1 0
+7c = 0 1 1 1 1 1 0 0
 so 4 bytes of pointers, 5 bytes of literal(?), 2 bytes of pointer
 (7c) c7 61 d1 60 dc 82 c5 82 e0 ac 61 
      ^ptr  ^ptr  ?  de--- mo--- ^ptr

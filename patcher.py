@@ -55,7 +55,6 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
                 except PatchChecksumError:
                     RustyDiskOriginal.restore_from_backup()
                     remove(extracted_file_path)
-
                     remove(extracted_file_path + '_edited')
                     return "Checksum error in file %s." % f
 
@@ -123,6 +122,8 @@ def patch(sysDisk, opDisk=None, diskA=None, diskB=None, path_in_disk=None, backu
                 else:
                     RustyDiskOriginal.insert(extracted_file_path, path_in_disk, fallback_path='RUSTY')
             except ReadOnlyDiskError:
+                remove(extracted_file_path)
+                remove(extracted_file_path + '_edited')
                 return "Can't write to disk %s. Make sure it's not read-only." % disks[disk_index]
             remove(extracted_file_path)
             remove(extracted_file_path + '_edited')
