@@ -9,4 +9,10 @@ https://rpg.hamsterrepublic.com/ohrrpgce/16-color
 	* In the final "Export image as BMP" options dialog, under 'Compatibility Options', check the box 'Do not write color space information'.
 
 ### Conversion to MAG
-* abc0234f.rar
+* A few choices here:
+	* JEDAI.HDI
+		* Put the BMP in JEDAI.HDI.
+		* Click the floppy disk button, then the one with the arrow facing away from the disk. Select the .BMP image.
+		* Now click the floppy disk again, and the one with the arrow facing toward the disk. Save it as a 16-bit MAG.
+	* abc0234f.rar
+		* (Don't remember. Something about AtoB converter with Susie plugins)
